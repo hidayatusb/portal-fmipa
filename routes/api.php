@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\Mahasiswa\AssignmentController as MahasiswaAssignme
 use App\Http\Controllers\Api\Mahasiswa\CourseController as MahasiswaCourseController;
 use App\Http\Controllers\Api\Mahasiswa\DashboardController as MahasiswaDashboardController;
 use App\Http\Controllers\Api\DeviceTokenController;
+use App\Http\Controllers\Api\FcmTopicController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/device-tokens', [DeviceTokenController::class, 'store']);
     Route::delete('/device-tokens', [DeviceTokenController::class, 'destroy']);
+    Route::get('/fcm/topics', [FcmTopicController::class, 'index']);
 
     Route::middleware('role:admin')->prefix('admin')->group(function () {
         Route::get('/dashboard', AdminDashboardController::class);

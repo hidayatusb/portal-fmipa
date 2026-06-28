@@ -3,13 +3,13 @@
 namespace App\Notifications;
 
 use App\Models\AssignmentSubmission;
-use App\Notifications\Concerns\DeliversPushNotification;
+use App\Notifications\Concerns\DeliversTokenPushNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
 class AssignmentGradedNotification extends Notification
 {
-    use DeliversPushNotification;
+    use DeliversTokenPushNotification;
     use Queueable;
 
     public function __construct(public AssignmentSubmission $submission) {}

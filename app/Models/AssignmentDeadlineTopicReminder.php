@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class AssignmentDeadlineTopicReminder extends Model
+{
+    protected $fillable = [
+        'assignment_id',
+        'hours_before',
+        'sent_at',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'assignment_id' => 'integer',
+            'hours_before' => 'integer',
+            'sent_at' => 'datetime',
+        ];
+    }
+
+    public function assignment(): BelongsTo
+    {
+        return $this->belongsTo(Assignment::class);
+    }
+}

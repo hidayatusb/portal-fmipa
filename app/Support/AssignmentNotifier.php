@@ -5,7 +5,7 @@ namespace App\Support;
 use App\Models\Assignment;
 use App\Models\User;
 use App\Notifications\NewAssignmentNotification;
-use Illuminate\Support\Collection;
+use App\Services\CoursePushNotifier;
 
 class AssignmentNotifier
 {
@@ -13,11 +13,11 @@ class AssignmentNotifier
     {
         $assignment->loadMissing(['course.students']);
 
-        /** @var Collection<int, User> $students */
-        $students = $assignment->course->students;
-
-        foreach ($students as $student) {
+        foreach ($assignment->course->students as $student) {
+            /** @var User $student */
             $student->notify(new NewAssignmentNotification($assignment));
         }
+
+        CoursePushNotifier::pushNewAssignment($assignment);
     }
 }

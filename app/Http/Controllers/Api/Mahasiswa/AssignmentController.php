@@ -7,8 +7,8 @@ use App\Http\Resources\AssignmentResource;
 use App\Http\Resources\SubmissionResource;
 use App\Models\Assignment;
 use App\Models\Course;
-use App\Notifications\AssignmentSubmittedNotification;
 use App\Support\CourseStorage;
+use App\Support\SubmissionPushNotifier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -90,14 +90,8 @@ class AssignmentController extends ApiController
         }
 
         $submission->refresh()->loadMissing(['student', 'assignment.course']);
-        $course->loadMissing('lecturer');
 
-        if ($lecturer = $course->lecturer) {
-            $lecturer->notify(new AssignmentSubmittedNotification(
-                submission: $submission,
-                isUpdate: $isUpdate,
-            ));
-        }
+        SubmissionPushNotifier::notifyLecturer($submission, $isUpdate);
 
         return $this->success(
             SubmissionResource::make($submission),

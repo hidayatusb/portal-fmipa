@@ -3,19 +3,25 @@
 namespace App\Notifications;
 
 use App\Models\AssignmentSubmission;
-use App\Notifications\Concerns\DeliversPushNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
 class AssignmentSubmittedNotification extends Notification
 {
-    use DeliversPushNotification;
     use Queueable;
 
     public function __construct(
         public AssignmentSubmission $submission,
         public bool $isUpdate = false,
     ) {}
+
+    /**
+     * @return list<string>
+     */
+    public function via(object $notifiable): array
+    {
+        return ['database'];
+    }
 
     /**
      * @return array<string, mixed>
@@ -50,25 +56,5 @@ class AssignmentSubmittedNotification extends Notification
                 'submission' => $this->submission,
             ]),
         ];
-    }
-
-    /**
-     * @return array{title: string, body: string, data: array<string, string|int|bool|null>}
-     */
-    public function pushPayload(object $notifiable): array
-    {
-        $payload = $this->toArray($notifiable);
-
-        return $this->pushMessage(
-            $payload['title'],
-            $payload['message'],
-            [
-                'type' => 'assignment_submitted',
-                'course_id' => (string) $payload['course_id'],
-                'assignment_id' => (string) $payload['assignment_id'],
-                'submission_id' => (string) $payload['submission_id'],
-                'is_update' => $this->isUpdate ? '1' : '0',
-            ],
-        );
     }
 }

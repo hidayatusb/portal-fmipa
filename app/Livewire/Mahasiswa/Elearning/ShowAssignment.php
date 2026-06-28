@@ -6,8 +6,8 @@ use App\Livewire\Concerns\SetsBreadcrumbs;
 use App\Models\Assignment;
 use App\Models\AssignmentSubmission;
 use App\Models\Course;
-use App\Notifications\AssignmentSubmittedNotification;
 use App\Support\CourseStorage;
+use App\Support\SubmissionPushNotifier;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
@@ -163,14 +163,7 @@ class ShowAssignment extends Component
         $this->submission->loadMissing(['student', 'assignment.course']);
         $this->fillForm();
 
-        $this->course->loadMissing('lecturer');
-
-        if ($lecturer = $this->course->lecturer) {
-            $lecturer->notify(new AssignmentSubmittedNotification(
-                submission: $this->submission,
-                isUpdate: $isUpdate,
-            ));
-        }
+        SubmissionPushNotifier::notifyLecturer($this->submission, $isUpdate);
 
         session()->flash('success', 'Jawaban tugas berhasil dikumpulkan.');
     }

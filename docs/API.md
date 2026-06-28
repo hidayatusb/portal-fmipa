@@ -192,9 +192,14 @@ Tandai semua notifikasi dibaca.
 
 ---
 
-## Push Notification (FCM) — Flutter
+## Push Notification (FCM) — Hybrid (Topic + Token)
 
-Push **melengkapi** notifikasi database. Flutter menerima push via Firebase Cloud Messaging.
+Push **melengkapi** notifikasi database. Model **hybrid**:
+
+| Metode | Digunakan untuk |
+|--------|-----------------|
+| **FCM Topic** (per kelas) | Tugas baru, deadline mendekat, pengumpulan tugas → dosen |
+| **FCM Token** (per user) | Tugas dinilai (personal) |
 
 ### Setup Backend
 
@@ -204,9 +209,50 @@ Push **melengkapi** notifikasi database. Flutter menerima push via Firebase Clou
 
 > File `google-services.json` hanya untuk app Android. Laravel membutuhkan **service-account.json** untuk kirim push.
 
+### FCM Topic (Flutter subscribe)
+
+Format topic:
+
+| Role | Topic |
+|------|-------|
+| Mahasiswa | `course_{course_id}_students` |
+| Dosen | `course_{course_id}_lecturer` |
+
+**Flutter — setelah login:**
+
+```dart
+// 1. Ambil daftar topic dari API
+final res = await api.get('/fcm/topics');
+for (final topic in res.data['topics']) {
+  await FirebaseMessaging.instance.subscribeToTopic(topic);
+}
+
+// 2. Saat join kelas → subscribe topic baru
+await FirebaseMessaging.instance.subscribeToTopic('course_${courseId}_students');
+
+// 3. Saat keluar kelas → unsubscribe
+await FirebaseMessaging.instance.unsubscribeFromTopic('course_${courseId}_students');
+```
+
+### GET `/fcm/topics`
+
+Daftar topic yang harus di-subscribe user login. **Auth required**
+
+**Response `data`**
+
+```json
+{
+  "topics": ["course_1_students", "course_2_students"],
+  "subscribe_hint": {
+    "students": "course_{course_id}_students",
+    "lecturer": "course_{course_id}_lecturer"
+  }
+}
+```
+
 ### POST `/device-tokens`
 
-Daftar / update FCM token setelah login. **Auth required**
+Daftar FCM token untuk notifikasi **personal** (tugas dinilai). **Auth required — kirim setelah login**
 
 **Body (JSON)**
 
@@ -228,12 +274,12 @@ Hapus token saat logout. **Auth required**
 
 ### Tipe Push (`data.type`)
 
-| type | Penerima | Kapan |
-|------|----------|-------|
-| `assignment_submitted` | Dosen | Mahasiswa kumpul / update tugas |
-| `assignment_graded` | Mahasiswa | Tugas dinilai dosen |
-| `assignment_new` | Mahasiswa | Tugas baru dibuat |
-| `assignment_deadline` | Mahasiswa | Deadline mendekat (24 jam & 72 jam) |
+| type | Metode | Penerima | Kapan |
+|------|--------|----------|-------|
+| `assignment_submitted` | **Topic** `course_{id}_lecturer` | Dosen | Mahasiswa kumpul / update tugas |
+| `assignment_graded` | **Token** per user | Mahasiswa | Tugas dinilai dosen |
+| `assignment_new` | **Topic** `course_{id}_students` | Mahasiswa | Tugas baru dibuat |
+| `assignment_deadline` | **Topic** `course_{id}_students` | Mahasiswa | Deadline mendekat (24 jam & 72 jam) |
 
 **Contoh payload `data` (untuk deep link Flutter)**
 
@@ -246,6 +292,70 @@ Hapus token saat logout. **Auth required**
   "score": "88"
 }
 ```
+
+### Troubleshooting: notifikasi hanya muncul saat app terbuka (Android)
+
+Backend mengirim payload **`notification` + `data`** dengan prioritas **high** dan channel `high_importance_channel`. Jika push hanya muncul saat app foreground, periksa di **Flutter/Android**:
+
+1. **Izin notifikasi (Android 13+)** — wajib request runtime permission:
+   ```dart
+   await FirebaseMessaging.instance.requestPermission();
+   // + permission_handler: Permission.notification.request()
+   ```
+
+2. **Notification channel** — buat channel dengan ID yang sama dengan backend:
+   ```dart
+   const channel = AndroidNotificationChannel(
+     'high_importance_channel', // harus sama dengan FCM_ANDROID_CHANNEL_ID
+     'Notifikasi Penting',
+     importance: Importance.high,
+   );
+   await flutterLocalNotificationsPlugin
+       .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+       ?.createNotificationChannel(channel);
+   ```
+
+3. **AndroidManifest.xml** — tambahkan di `<application>`:
+   ```xml
+   <meta-data
+       android:name="com.google.firebase.messaging.default_notification_channel_id"
+       android:value="high_importance_channel" />
+   ```
+
+4. **Foreground vs background** — perilaku berbeda:
+   - **Background/killed**: sistem Android otomatis tampilkan tray notifikasi (jika ada block `notification` di FCM)
+   - **Foreground**: `FirebaseMessaging.onMessage` — **harus** tampilkan manual via `flutter_local_notifications`
+
+   ```dart
+   FirebaseMessaging.onMessage.listen((message) {
+     // WAJIB show local notification saat app terbuka
+     showLocalNotification(message);
+   });
+
+   // Background handler (top-level function, bukan di dalam class)
+   @pragma('vm:entry-point')
+   Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+     await Firebase.initializeApp();
+   }
+
+   void main() async {
+     WidgetsFlutterBinding.ensureInitialized();
+     await Firebase.initializeApp();
+     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+   }
+   ```
+
+5. **Subscribe topic** — pastikan sudah jalan **setelah login**:
+   ```dart
+   final res = await api.get('/fcm/topics');
+   for (final topic in res.data['topics']) {
+     await FirebaseMessaging.instance.subscribeToTopic(topic);
+   }
+   ```
+
+6. **Jangan campur dengan polling API** — notifikasi di drawer in-app (dari `GET /notifications`) bukan push FCM. Push harus muncul di **system tray** meski app ditutup.
+
+7. **Battery optimization** — matikan battery saver untuk app di pengaturan HP (Xiaomi/Oppo/Vivo sering memblokir FCM).
 
 ---
 

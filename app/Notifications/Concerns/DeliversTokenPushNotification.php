@@ -4,7 +4,7 @@ namespace App\Notifications\Concerns;
 
 use App\Notifications\Channels\FcmChannel;
 
-trait DeliversPushNotification
+trait DeliversTokenPushNotification
 {
     /**
      * @return list<string|class-string>
