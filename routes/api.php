@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\Dosen\SubmissionController as DosenSubmissionContro
 use App\Http\Controllers\Api\Mahasiswa\AssignmentController as MahasiswaAssignmentController;
 use App\Http\Controllers\Api\Mahasiswa\CourseController as MahasiswaCourseController;
 use App\Http\Controllers\Api\Mahasiswa\DashboardController as MahasiswaDashboardController;
+use App\Http\Controllers\Api\DeviceTokenController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +33,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
     Route::post('/notifications/{notificationId}/read', [NotificationController::class, 'markAsRead']);
+
+    Route::post('/device-tokens', [DeviceTokenController::class, 'store']);
+    Route::delete('/device-tokens', [DeviceTokenController::class, 'destroy']);
 
     Route::middleware('role:admin')->prefix('admin')->group(function () {
         Route::get('/dashboard', AdminDashboardController::class);

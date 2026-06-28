@@ -7,48 +7,37 @@ use App\Notifications\Concerns\DeliversPushNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
-class AssignmentSubmittedNotification extends Notification
+class AssignmentGradedNotification extends Notification
 {
     use DeliversPushNotification;
     use Queueable;
 
-    public function __construct(
-        public AssignmentSubmission $submission,
-        public bool $isUpdate = false,
-    ) {}
+    public function __construct(public AssignmentSubmission $submission) {}
 
     /**
      * @return array<string, mixed>
      */
     public function toArray(object $notifiable): array
     {
-        $this->submission->loadMissing(['student', 'assignment.course']);
+        $this->submission->loadMissing(['assignment.course']);
 
         $assignment = $this->submission->assignment;
         $course = $assignment->course;
-        $student = $this->submission->student;
 
         return [
-            'type' => 'assignment_submitted',
-            'title' => $this->isUpdate ? 'Pengumpulan Diperbarui' : 'Tugas Dikumpulkan',
+            'type' => 'assignment_graded',
+            'title' => 'Tugas Dinilai',
             'message' => sprintf(
-                '%s %s tugas "%s" (%s)',
-                $student->name,
-                $this->isUpdate ? 'memperbarui pengumpulan' : 'mengumpulkan',
+                'Tugas "%s" (%s) telah dinilai. Skor: %s',
                 $assignment->title,
                 $course->code,
+                $this->submission->score,
             ),
             'course_id' => $course->id,
             'assignment_id' => $assignment->id,
             'submission_id' => $this->submission->id,
-            'student_name' => $student->name,
-            'is_late' => $this->submission->isLate(),
-            'is_update' => $this->isUpdate,
-            'url' => route('dosen.elearning.submissions.show', [
-                'course' => $course,
-                'assignment' => $assignment,
-                'submission' => $this->submission,
-            ]),
+            'score' => $this->submission->score,
+            'feedback' => $this->submission->feedback,
         ];
     }
 
@@ -63,11 +52,11 @@ class AssignmentSubmittedNotification extends Notification
             $payload['title'],
             $payload['message'],
             [
-                'type' => 'assignment_submitted',
+                'type' => 'assignment_graded',
                 'course_id' => (string) $payload['course_id'],
                 'assignment_id' => (string) $payload['assignment_id'],
                 'submission_id' => (string) $payload['submission_id'],
-                'is_update' => $this->isUpdate ? '1' : '0',
+                'score' => (string) $payload['score'],
             ],
         );
     }

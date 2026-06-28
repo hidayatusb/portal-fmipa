@@ -8,6 +8,7 @@ use App\Models\Assignment;
 use App\Models\AssignmentSubmission;
 use App\Models\Course;
 use App\Support\CourseStorage;
+use App\Support\SubmissionNotifier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -57,6 +58,8 @@ class SubmissionController extends ApiController
             'feedback' => $validated['feedback'] ?? null,
             'feedback_at' => now(),
         ]);
+
+        SubmissionNotifier::notifyStudentAboutGrade($submission->fresh(['student', 'assignment.course']));
 
         return $this->success(SubmissionResource::make($submission->fresh(['student', 'assignment'])), 'Penilaian berhasil disimpan.');
     }

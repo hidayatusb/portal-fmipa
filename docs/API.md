@@ -192,6 +192,63 @@ Tandai semua notifikasi dibaca.
 
 ---
 
+## Push Notification (FCM) — Flutter
+
+Push **melengkapi** notifikasi database. Flutter menerima push via Firebase Cloud Messaging.
+
+### Setup Backend
+
+1. Download **Service Account JSON** dari Firebase Console → Service accounts
+2. Simpan ke `storage/app/firebase/service-account.json`
+3. Set env: `FIREBASE_CREDENTIALS`, `FCM_ENABLED=true`
+
+> File `google-services.json` hanya untuk app Android. Laravel membutuhkan **service-account.json** untuk kirim push.
+
+### POST `/device-tokens`
+
+Daftar / update FCM token setelah login. **Auth required**
+
+**Body (JSON)**
+
+| Field | Tipe | Wajib | Keterangan |
+|-------|------|-------|------------|
+| token | string | ya | FCM device token dari Flutter |
+| platform | string | ya | `android` atau `ios` |
+| device_name | string | tidak | Nama perangkat |
+
+### DELETE `/device-tokens`
+
+Hapus token saat logout. **Auth required**
+
+**Body (JSON)**
+
+| Field | Tipe | Wajib |
+|-------|------|-------|
+| token | string | ya |
+
+### Tipe Push (`data.type`)
+
+| type | Penerima | Kapan |
+|------|----------|-------|
+| `assignment_submitted` | Dosen | Mahasiswa kumpul / update tugas |
+| `assignment_graded` | Mahasiswa | Tugas dinilai dosen |
+| `assignment_new` | Mahasiswa | Tugas baru dibuat |
+| `assignment_deadline` | Mahasiswa | Deadline mendekat (24 jam & 72 jam) |
+
+**Contoh payload `data` (untuk deep link Flutter)**
+
+```json
+{
+  "type": "assignment_graded",
+  "course_id": "1",
+  "assignment_id": "2",
+  "submission_id": "5",
+  "score": "88"
+}
+```
+
+---
+
 ## Admin
 
 **Prefix:** `/admin` · **Role:** `admin`

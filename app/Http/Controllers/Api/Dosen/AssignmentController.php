@@ -7,6 +7,7 @@ use App\Http\Resources\AssignmentResource;
 use App\Http\Resources\SubmissionResource;
 use App\Models\Assignment;
 use App\Models\Course;
+use App\Support\AssignmentNotifier;
 use App\Support\CourseStorage;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -44,6 +45,8 @@ class AssignmentController extends ApiController
                 ),
             ]);
         }
+
+        AssignmentNotifier::notifyStudentsAboutNewAssignment($assignment->fresh());
 
         return $this->success(AssignmentResource::make($assignment), 'Tugas berhasil ditambahkan.', 201);
     }

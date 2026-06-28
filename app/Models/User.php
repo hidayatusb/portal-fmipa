@@ -108,6 +108,11 @@ class User extends Authenticatable
         return $this->hasMany(AssignmentSubmission::class);
     }
 
+    public function deviceTokens(): HasMany
+    {
+        return $this->hasMany(DeviceToken::class);
+    }
+
     public function hasProfilePicture(): bool
     {
         return filled($this->profile_picture)

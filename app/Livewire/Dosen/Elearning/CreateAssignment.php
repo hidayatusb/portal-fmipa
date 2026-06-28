@@ -4,6 +4,7 @@ namespace App\Livewire\Dosen\Elearning;
 
 use App\Livewire\Concerns\SetsBreadcrumbs;
 use App\Models\Course;
+use App\Support\AssignmentNotifier;
 use App\Support\CourseStorage;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
@@ -84,6 +85,8 @@ class CreateAssignment extends Component
                 ),
             ]);
         }
+
+        AssignmentNotifier::notifyStudentsAboutNewAssignment($assignment->fresh());
 
         session()->flash('success', 'Tugas berhasil ditambahkan.');
 

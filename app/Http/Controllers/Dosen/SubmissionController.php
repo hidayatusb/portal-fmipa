@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Assignment;
 use App\Models\AssignmentSubmission;
 use App\Models\Course;
+use App\Support\SubmissionNotifier;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -65,6 +66,8 @@ class SubmissionController extends Controller
             'feedback' => $validated['feedback'] ?? null,
             'feedback_at' => now(),
         ]);
+
+        SubmissionNotifier::notifyStudentAboutGrade($submission->fresh(['student', 'assignment.course']));
 
         return redirect()
             ->route('dosen.elearning.submissions.show', [$course, $assignment, $submission])
