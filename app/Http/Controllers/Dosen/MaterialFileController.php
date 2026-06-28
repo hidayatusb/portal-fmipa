@@ -35,7 +35,7 @@ class MaterialFileController extends Controller
     protected function authorizeAccess(Course $course, CourseMaterial $material): void
     {
         abort_unless($course->ownedBy(Auth::id()), 403);
-        abort_unless($material->course_id === $course->id, 404);
+        abort_unless($material->belongsToCourse($course), 404);
         abort_unless($material->hasFile(), 404);
     }
 }

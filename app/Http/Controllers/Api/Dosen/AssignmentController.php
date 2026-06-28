@@ -129,6 +129,6 @@ class AssignmentController extends ApiController
     protected function authorizeAssignment(Course $course, Assignment $assignment): void
     {
         $this->authorizeCourse($course);
-        abort_unless($assignment->course_id === $course->id, 404);
+        abort_unless($assignment->belongsToCourse($course), 404);
     }
 }

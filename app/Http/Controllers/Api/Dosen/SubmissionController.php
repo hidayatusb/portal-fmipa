@@ -72,7 +72,7 @@ class SubmissionController extends ApiController
     protected function authorizeSubmission(Course $course, Assignment $assignment, AssignmentSubmission $submission): void
     {
         abort_unless($course->ownedBy(Auth::id()), 403);
-        abort_unless($assignment->course_id === $course->id, 404);
-        abort_unless($submission->assignment_id === $assignment->id, 404);
+        abort_unless($assignment->belongsToCourse($course), 404);
+        abort_unless($submission->belongsToAssignment($assignment), 404);
     }
 }

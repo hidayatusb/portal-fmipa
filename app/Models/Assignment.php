@@ -25,6 +25,7 @@ class Assignment extends Model
     protected function casts(): array
     {
         return [
+            'course_id' => 'integer',
             'accept_late_submissions' => 'boolean',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
@@ -57,6 +58,17 @@ class Assignment extends Model
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
+    }
+
+    public function belongsToCourse(Course|int|string|null $course): bool
+    {
+        $courseId = $course instanceof Course ? $course->id : $course;
+
+        if ($courseId === null) {
+            return false;
+        }
+
+        return (int) $this->course_id === (int) $courseId;
     }
 
     public function sequenceNumber(): int

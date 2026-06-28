@@ -36,6 +36,15 @@ class Course extends Model
         return (int) $this->user_id === (int) $userId;
     }
 
+    public function matchesId(int|string|null $id): bool
+    {
+        if ($id === null) {
+            return false;
+        }
+
+        return (int) $this->id === (int) $id;
+    }
+
     public function lecturer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');

@@ -134,6 +134,6 @@ class AssignmentController extends ApiController
             Auth::user()->enrolledCourses()->whereKey($course->id)->exists(),
             403
         );
-        abort_unless($assignment->course_id === $course->id, 404);
+        abort_unless($assignment->belongsToCourse($course), 404);
     }
 }

@@ -35,11 +35,11 @@ class SubmissionFileController extends Controller
 
     protected function authorizeAccess(Course $course, Assignment $assignment, AssignmentSubmission $submission): void
     {
-        abort_unless($assignment->course_id === $course->id, 404);
-        abort_unless($submission->assignment_id === $assignment->id, 404);
+        abort_unless($assignment->belongsToCourse($course), 404);
+        abort_unless($submission->belongsToAssignment($assignment), 404);
         abort_unless($submission->hasFile(), 404);
         abort_unless(
-            $submission->user_id === Auth::id()
+            $submission->ownedBy(Auth::id())
             && Auth::user()->enrolledCourses()->whereKey($course->id)->exists(),
             403
         );

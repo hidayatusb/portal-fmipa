@@ -18,6 +18,13 @@ class CourseMaterial extends Model
         'sort_order',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'course_id' => 'integer',
+        ];
+    }
+
     protected static function booted(): void
     {
         static::deleting(function (CourseMaterial $material) {
@@ -30,6 +37,17 @@ class CourseMaterial extends Model
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
+    }
+
+    public function belongsToCourse(Course|int|string|null $course): bool
+    {
+        $courseId = $course instanceof Course ? $course->id : $course;
+
+        if ($courseId === null) {
+            return false;
+        }
+
+        return (int) $this->course_id === (int) $courseId;
     }
 
     public function hasFile(): bool

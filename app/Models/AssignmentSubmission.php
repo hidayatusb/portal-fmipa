@@ -23,6 +23,8 @@ class AssignmentSubmission extends Model
     protected function casts(): array
     {
         return [
+            'assignment_id' => 'integer',
+            'user_id' => 'integer',
             'submitted_at' => 'datetime',
             'score' => 'integer',
             'feedback_at' => 'datetime',
@@ -46,6 +48,26 @@ class AssignmentSubmission extends Model
     public function student(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function belongsToAssignment(Assignment|int|string|null $assignment): bool
+    {
+        $assignmentId = $assignment instanceof Assignment ? $assignment->id : $assignment;
+
+        if ($assignmentId === null) {
+            return false;
+        }
+
+        return (int) $this->assignment_id === (int) $assignmentId;
+    }
+
+    public function ownedBy(int|string|null $userId): bool
+    {
+        if ($userId === null) {
+            return false;
+        }
+
+        return (int) $this->user_id === (int) $userId;
     }
 
     public function hasFile(): bool

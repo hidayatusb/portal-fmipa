@@ -38,7 +38,7 @@ class ShowAssignment extends Component
             Auth::user()->enrolledCourses()->whereKey($course->id)->exists(),
             403
         );
-        abort_unless($assignment->course_id === $course->id, 404);
+        abort_unless($assignment->belongsToCourse($course), 404);
 
         $this->course = $course;
         $this->assignment = $assignment;
@@ -71,7 +71,7 @@ class ShowAssignment extends Component
             Auth::user()->enrolledCourses()->whereKey($this->course->id)->exists(),
             403
         );
-        abort_unless($this->assignment->course_id === $this->course->id, 404);
+        abort_unless($this->assignment->belongsToCourse($this->course), 404);
     }
 
     public function removeFile(): void

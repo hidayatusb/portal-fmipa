@@ -96,7 +96,7 @@ class CourseController extends ApiController
     public function materialFile(Course $course, CourseMaterial $material): StreamedResponse|JsonResponse
     {
         $this->authorizeEnrollment($course);
-        abort_unless($material->course_id === $course->id, 404);
+        abort_unless($material->belongsToCourse($course), 404);
         abort_unless($material->hasFile(), 404);
 
         return CourseStorage::diskForPath($material->file_path)->download($material->file_path, $material->file_name);

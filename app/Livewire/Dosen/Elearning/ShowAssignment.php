@@ -40,7 +40,7 @@ class ShowAssignment extends Component
     public function mount(Course $course, Assignment $assignment): void
     {
         abort_unless($course->ownedBy(Auth::id()), 403);
-        abort_unless($assignment->course_id === $course->id, 404);
+        abort_unless($assignment->belongsToCourse($course), 404);
 
         $this->course = $course->load('students');
         $this->assignment = $assignment->load(['submissions.student']);
@@ -56,7 +56,7 @@ class ShowAssignment extends Component
     protected function authorizeAssignment(): void
     {
         abort_unless($this->course->ownedBy(Auth::id()), 403);
-        abort_unless($this->assignment->course_id === $this->course->id, 404);
+        abort_unless($this->assignment->belongsToCourse($this->course), 404);
     }
 
     protected function fillEditForm(): void
