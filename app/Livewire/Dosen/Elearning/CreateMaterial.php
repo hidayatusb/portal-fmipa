@@ -29,7 +29,7 @@ class CreateMaterial extends Component
 
     public function mount(Course $course): void
     {
-        abort_unless($course->user_id === Auth::id(), 403);
+        abort_unless($course->ownedBy(Auth::id()), 403);
 
         $this->course = $course;
 

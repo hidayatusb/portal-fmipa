@@ -66,6 +66,6 @@ class MaterialController extends ApiController
 
     protected function authorizeCourse(Course $course): void
     {
-        abort_unless($course->user_id === Auth::id(), 403);
+        abort_unless($course->ownedBy(Auth::id()), 403);
     }
 }

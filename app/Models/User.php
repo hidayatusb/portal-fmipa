@@ -53,24 +53,42 @@ class User extends Authenticatable
         ];
     }
 
+    public function hasRole(UserRole $role): bool
+    {
+        return $this->resolvedRole() === $role;
+    }
+
+    public function hasAnyRole(UserRole ...$roles): bool
+    {
+        $currentRole = $this->resolvedRole();
+
+        return $currentRole !== null && in_array($currentRole, $roles, true);
+    }
+
+    public function resolvedRole(): ?UserRole
+    {
+        $role = $this->role;
+
+        if ($role instanceof UserRole) {
+            return $role;
+        }
+
+        return UserRole::tryFrom((string) $role);
+    }
+
     public function isAdmin(): bool
     {
-        return $this->role === UserRole::Admin;
+        return $this->hasRole(UserRole::Admin);
     }
 
     public function isDosen(): bool
     {
-        return $this->role === UserRole::Dosen;
+        return $this->hasRole(UserRole::Dosen);
     }
 
     public function isMahasiswa(): bool
     {
-        return $this->role === UserRole::Mahasiswa;
-    }
-
-    public function hasRole(UserRole $role): bool
-    {
-        return $this->role === $role;
+        return $this->hasRole(UserRole::Mahasiswa);
     }
 
     public function courses(): HasMany

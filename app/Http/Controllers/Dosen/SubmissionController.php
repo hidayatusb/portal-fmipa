@@ -76,7 +76,7 @@ class SubmissionController extends Controller
         Assignment $assignment,
         AssignmentSubmission $submission
     ): void {
-        abort_unless($course->user_id === Auth::id(), 403);
+        abort_unless($course->ownedBy(Auth::id()), 403);
         abort_unless($assignment->course_id === $course->id, 404);
         abort_unless($submission->assignment_id === $assignment->id, 404);
     }

@@ -20,6 +20,22 @@ class Course extends Model
         'weight_uas',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'user_id' => 'integer',
+        ];
+    }
+
+    public function ownedBy(int|string|null $userId): bool
+    {
+        if ($userId === null) {
+            return false;
+        }
+
+        return (int) $this->user_id === (int) $userId;
+    }
+
     public function lecturer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');

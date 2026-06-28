@@ -32,7 +32,7 @@ class EnsureUserRole
             ->filter()
             ->all();
 
-        if ($allowedRoles === [] || ! in_array($user->role, $allowedRoles, true)) {
+        if ($allowedRoles === [] || ! $user->hasAnyRole(...$allowedRoles)) {
             if ($request->is('api/*') || $request->expectsJson()) {
                 return response()->json([
                     'success' => false,

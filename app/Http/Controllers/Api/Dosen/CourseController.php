@@ -96,6 +96,6 @@ class CourseController extends ApiController
 
     protected function authorizeCourse(Course $course): void
     {
-        abort_unless($course->user_id === Auth::id(), 403, 'Anda tidak memiliki akses ke mata kuliah ini.');
+        abort_unless($course->ownedBy(Auth::id()), 403, 'Anda tidak memiliki akses ke mata kuliah ini.');
     }
 }

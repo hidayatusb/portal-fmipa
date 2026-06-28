@@ -34,7 +34,7 @@ class AssignmentAttachmentController extends Controller
 
     protected function authorizeAccess(Course $course, Assignment $assignment): void
     {
-        abort_unless($course->user_id === Auth::id(), 403);
+        abort_unless($course->ownedBy(Auth::id()), 403);
         abort_unless($assignment->course_id === $course->id, 404);
         abort_unless($assignment->hasAttachment(), 404);
     }
