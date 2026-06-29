@@ -193,7 +193,7 @@
                         <form wire:submit.prevent="submitAssignment" class="flex flex-col gap-5">
                             <div class="flex flex-col gap-2">
                                 <label class="text-sm font-medium text-mono" for="content">Catatan / Jawaban Teks</label>
-                                <textarea id="content" rows="4" class="kt-input" wire:model="content"
+                                <textarea id="content" rows="4" class="kt-textarea" wire:model="content"
                                     placeholder="Tulis jawaban atau catatan tambahan (opsional jika ada file)"
                                     @if ($assignment->isClosedForSubmissions()) disabled @endif></textarea>
                                 @error('content')

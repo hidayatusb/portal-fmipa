@@ -163,7 +163,7 @@
                             </div>
                             <div class="flex flex-col gap-2">
                                 <label class="text-sm font-medium text-mono" for="feedback">Feedback</label>
-                                <textarea id="feedback" name="feedback" rows="5" class="kt-input"
+                                <textarea id="feedback" name="feedback" rows="5" class="kt-textarea"
                                     placeholder="Berikan catatan atau koreksi untuk mahasiswa...">{{ old('feedback', $submission->feedback) }}</textarea>
                                 @error('feedback')
                                     <span class="text-xs text-destructive">{{ $message }}</span>

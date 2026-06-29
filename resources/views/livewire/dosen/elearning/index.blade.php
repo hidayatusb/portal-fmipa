@@ -46,7 +46,7 @@
                     </div>
                     <div class="flex flex-col gap-2">
                         <label class="text-sm font-medium text-mono" for="description">Deskripsi</label>
-                        <textarea id="description" rows="3" class="kt-input" wire:model="description"
+                        <textarea id="description" rows="3" class="kt-textarea" wire:model="description"
                             placeholder="Deskripsi singkat mata kuliah"></textarea>
                         @error('description')
                             <span class="text-xs text-destructive">{{ $message }}</span>
