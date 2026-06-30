@@ -125,6 +125,20 @@ class User extends Authenticatable
             return route('profile.picture', ['v' => $this->updated_at?->timestamp]);
         }
 
+        return $this->defaultProfilePictureUrl();
+    }
+
+    public function profilePictureApiUrl(): string
+    {
+        if ($this->hasProfilePicture()) {
+            return route('api.profile.picture', ['v' => $this->updated_at?->timestamp]);
+        }
+
+        return $this->defaultProfilePictureUrl();
+    }
+
+    public function defaultProfilePictureUrl(): string
+    {
         return asset('assets/media/avatars/300-2.png');
     }
 

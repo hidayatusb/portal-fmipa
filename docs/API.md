@@ -136,6 +136,27 @@ Hapus token aktif. **Auth required**
 
 Ambil profil user. **Auth required**
 
+### GET `/profile/picture`
+
+Unduh foto profil user yang sedang login. **Auth required**
+
+| Header | Nilai |
+|--------|-------|
+| Authorization | `Bearer {token}` |
+
+Response: file gambar (`Content-Disposition: inline`). Jika user belum punya foto custom, endpoint mengembalikan **404**.
+
+Field `profile_picture_url` di response JSON mengarah ke endpoint ini (dengan query `v` untuk cache busting). Avatar default (belum upload foto) tetap URL publik statis.
+
+**Flutter — tampilkan foto:**
+
+```dart
+Image.network(
+  user.profilePictureUrl,
+  headers: {'Authorization': 'Bearer $token'},
+)
+```
+
 ### PUT/PATCH `/profile`
 
 Update profil. **Auth required**

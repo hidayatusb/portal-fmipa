@@ -7,12 +7,26 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ProfileController extends ApiController
 {
     public function show(Request $request): JsonResponse
     {
         return $this->success(UserResource::make($request->user()));
+    }
+
+    public function picture(Request $request): StreamedResponse
+    {
+        $user = $request->user();
+
+        abort_unless($user->hasProfilePicture(), 404);
+
+        return Storage::disk('public')->response(
+            $user->profile_picture,
+            'profile-'.$user->id.'.'.pathinfo($user->profile_picture, PATHINFO_EXTENSION),
+            ['Content-Disposition' => 'inline']
+        );
     }
 
     public function update(Request $request): JsonResponse
