@@ -72,7 +72,7 @@ new #[Layout('layouts::login')] class extends Component {
                 <span class="text-sm text-secondary-foreground me-1.5">
                     Sudah punya akun?
                 </span>
-                <a class="text-sm link" href="{{ route('login') }}" wire:navigate>
+                <a class="text-sm kt-link" href="{{ route('login') }}" wire:navigate>
                     Masuk
                 </a>
             </div>

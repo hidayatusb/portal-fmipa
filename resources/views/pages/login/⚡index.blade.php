@@ -52,29 +52,34 @@ new #[Layout('layouts::login')] class extends Component {
 
     <form wire:submit.prevent="login" class="kt-card-content flex flex-col gap-5 p-10" id="sign_in_form">
         <div class="text-center mb-2.5">
+            <div class="mb-4 flex justify-center">
+                <img class="min-h-[28px] max-w-none dark:hidden" src="{{ asset('assets/media/app/mini-logo.svg') }}"
+                    alt="Portal FMIPA" />
+                <img class="hidden min-h-[28px] max-w-none dark:inline-block"
+                    src="{{ asset('assets/media/app/mini-logo-gray-dark.svg') }}" alt="Portal FMIPA" />
+            </div>
             <h3 class="text-lg font-medium text-mono leading-none mb-2.5">
-                Sign in
+                Masuk
             </h3>
             <div class="flex items-center justify-center font-medium">
                 <span class="text-sm text-secondary-foreground me-1.5">
-                    Need an account?
+                   Belum punya akun?
                 </span>
-                <a class="text-sm link" href="{{ route('register') }}" wire:navigate>
-                    Sign up
+                <a class="text-sm kt-link" href="{{ route('register') }}" wire:navigate>
+                    Daftar
                 </a>
             </div>
         </div>
 
 
         <div class="kt-form-item">
-            <label class="kt-form-label">Username:</label>
+            <label class="kt-form-label">NIM / NIDN / NIP :</label>
             <div class="kt-input">
                 <input type="text" class="kt-input" placeholder="Masukkan Username" aria-invalid="true"
                     wire:model="username" />
 
             </div>
-            <div class="kt-form-description">Enter your username to proceed.</div>
-
+            
             @error('username')
                 <div class="kt-form-message">{{ $message }}</div>
             @enderror
@@ -82,7 +87,7 @@ new #[Layout('layouts::login')] class extends Component {
         <div class="kt-form-item">
             <label class="kt-form-label">Password:</label>
             <div class="kt-input" data-kt-toggle-password="true">
-                <input type="password" class="kt-input" placeholder="Password" aria-invalid="true"
+                <input type="password" class="kt-input" placeholder="Masukkan Password" aria-invalid="true"
                      wire:model="password" />
                 <button class="kt-btn kt-btn-sm kt-btn-ghost kt-btn-icon bg-transparent! -me-1.5"
                     data-kt-toggle-password-trigger="true" type="button">
