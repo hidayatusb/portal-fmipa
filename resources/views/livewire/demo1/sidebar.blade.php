@@ -90,6 +90,27 @@
                     </div>
                 @endif
 
+                @if ($user?->isAdmin())
+                    <div class="kt-menu-item pt-2.25 pb-px">
+                        <span
+                            class="kt-menu-heading pe-[10px] ps-[10px] text-xs font-medium uppercase text-muted-foreground">
+                            Administrasi
+                        </span>
+                    </div>
+                    <div class="kt-menu-item">
+                        <a class="kt-menu-link kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 grow items-center gap-[10px] border border-transparent py-[6px] pe-[10px] ps-[10px] hover:rounded-lg {{ request()->routeIs('admin.user-approvals.*') ? 'kt-menu-item-active' : '' }}"
+                            href="{{ route('admin.user-approvals.index') }}" wire:navigate tabindex="0">
+                            <span class="kt-menu-icon w-[20px] items-start text-muted-foreground">
+                                <i class="ki-filled ki-people text-lg"></i>
+                            </span>
+                            <span
+                                class="kt-menu-title kt-menu-item-active:text-primary kt-menu-item-active:font-semibold kt-menu-link-hover:!text-primary text-sm font-medium text-foreground">
+                                Review Akun
+                            </span>
+                        </a>
+                    </div>
+                @endif
+
                 @if ($user)
                     <div class="kt-menu-item pt-2.25 pb-px">
                         <span

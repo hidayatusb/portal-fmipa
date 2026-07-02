@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Dashboard;
 
+use App\Enums\UserApprovalStatus;
 use App\Enums\UserRole;
 use App\Models\Course;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
@@ -20,6 +22,20 @@ class Index extends Component
     public function render(): View
     {
         $user = Auth::user();
+
+        if ($user?->isAdmin()) {
+            return view('livewire.dashboard.admin', [
+                'stats' => [
+                    'pending' => User::query()
+                        ->whereIn('role', [UserRole::Dosen, UserRole::Mahasiswa])
+                        ->where('approval_status', UserApprovalStatus::Pending)
+                        ->count(),
+                    'dosen' => User::where('role', UserRole::Dosen)->where('approval_status', UserApprovalStatus::Approved)->count(),
+                    'mahasiswa' => User::where('role', UserRole::Mahasiswa)->where('approval_status', UserApprovalStatus::Approved)->count(),
+                    'courses' => Course::count(),
+                ],
+            ])->layoutData(['breadcrumbs' => []]);
+        }
 
         if ($user?->role === UserRole::Dosen) {
             $courses = Course::query()

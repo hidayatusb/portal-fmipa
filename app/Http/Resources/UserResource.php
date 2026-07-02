@@ -17,6 +17,8 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'role' => $this->role->value,
             'role_label' => $this->role->label(),
+            'approval_status' => $this->approval_status->value,
+            'approval_status_label' => $this->approval_status->label(),
             'profile_picture_url' => $this->profilePictureApiUrl(),
             'initials' => $this->initials(),
             'created_at' => $this->created_at?->toIso8601String(),

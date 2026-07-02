@@ -34,7 +34,8 @@
                     </div>
                     <div class="flex flex-col gap-2">
                         <label class="text-sm font-medium text-mono" for="type">Tipe Materi</label>
-                        <select id="type" class="kt-input" wire:model.live="type">
+                        <select id="type" class="kt-select" wire:model.live="type">
+    
                             <option value="document">Dokumen</option>
                             <option value="video">Video</option>
                             <option value="link">Tautan</option>

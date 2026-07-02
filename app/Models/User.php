@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\UserApprovalStatus;
 use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -22,6 +23,13 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'approval_status' => UserApprovalStatus::Approved,
+    ];
+
+    /**
      * @var list<string>
      */
     protected $fillable = [
@@ -30,6 +38,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'approval_status',
         'profile_picture',
     ];
 
@@ -50,6 +59,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
+            'approval_status' => UserApprovalStatus::class,
         ];
     }
 
@@ -89,6 +99,41 @@ class User extends Authenticatable
     public function isMahasiswa(): bool
     {
         return $this->hasRole(UserRole::Mahasiswa);
+    }
+
+    public function resolvedApprovalStatus(): ?UserApprovalStatus
+    {
+        $status = $this->approval_status;
+
+        if ($status instanceof UserApprovalStatus) {
+            return $status;
+        }
+
+        return UserApprovalStatus::tryFrom((string) $status);
+    }
+
+    public function isPendingApproval(): bool
+    {
+        return $this->resolvedApprovalStatus() === UserApprovalStatus::Pending;
+    }
+
+    public function isApproved(): bool
+    {
+        return $this->resolvedApprovalStatus() === UserApprovalStatus::Approved;
+    }
+
+    public function isRejected(): bool
+    {
+        return $this->resolvedApprovalStatus() === UserApprovalStatus::Rejected;
+    }
+
+    public function approvalStatusMessage(): string
+    {
+        return match ($this->resolvedApprovalStatus()) {
+            UserApprovalStatus::Pending => 'Akun Anda masih menunggu persetujuan admin.',
+            UserApprovalStatus::Rejected => 'Akun Anda ditolak. Hubungi administrator untuk informasi lebih lanjut.',
+            default => 'Akun Anda tidak dapat mengakses sistem.',
+        };
     }
 
     public function courses(): HasMany

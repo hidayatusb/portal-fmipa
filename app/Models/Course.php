@@ -27,6 +27,20 @@ class Course extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::deleting(function (Course $course) {
+            $course->loadMissing(['materials', 'assignments.submissions']);
+
+            foreach ($course->assignments as $assignment) {
+                $assignment->submissions->each->delete();
+                $assignment->delete();
+            }
+
+            $course->materials->each->delete();
+        });
+    }
+
     public function ownedBy(int|string|null $userId): bool
     {
         if ($userId === null) {

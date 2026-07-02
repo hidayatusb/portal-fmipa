@@ -41,7 +41,7 @@
     }
     </style>
      <div class="flex items-center justify-center grow bg-center bg-no-repeat page-bg">
-        <div class="kt-card max-w-[370px] w-full">
+        <div class="kt-card max-w-[420px] w-full">
             {{ $slot }}
         </div>
     </div>
@@ -54,8 +54,7 @@
 
         });
     </script>
-
-  
+    @include('layouts.partials.scripts')
     @livewireScripts
 </body>
 </html>

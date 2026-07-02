@@ -11,14 +11,13 @@
             </div>
             <div class="flex items-center gap-2.5">
                 <div class="kt-menu" data-kt-menu="true">
-                    <div class="kt-menu-item" data-kt-menu-item-offset="0, 10px" data-kt-menu-item-placement="bottom-end"
-                        data-kt-menu-item-toggle="dropdown" data-kt-menu-item-trigger="click">
-                        <button type="button" class="kt-btn kt-btn-outline kt-menu-toggle">
+                    <div data-kt-dropdown="true" data-kt-dropdown-placement="bottom-end" data-kt-dropdown-placement-rtl="bottom-start" data-kt-dropdown-trigger="click" data-kt-dropdown-initialized="true">
+                        <button type="button" class="kt-btn kt-btn-outline kt-dropdown-toggle" data-kt-dropdown-toggle="true">
                             <i class="ki-filled ki-file-down"></i>
                             Export Nilai
                             <i class="ki-filled ki-down text-xs"></i>
                         </button>
-                        <div class="kt-menu-dropdown kt-menu-default w-48">
+                        <div class="kt-dropdown-menu kt-menu-default w-48">
                             <div class="kt-menu-item">
                                 <a class="kt-menu-link" href="{{ route('dosen.elearning.grades.export.excel', $course) }}">
                                     <span class="kt-menu-icon">
@@ -36,24 +35,75 @@
                                 </a>
                             </div>
                         </div>
+                        <div class="kt-dropdown-menu w-full max-w-[220px] hidden" data-kt-dropdown-menu="true" style="opacity: 0;">
+                            <ul class="kt-dropdown-menu-sub">
+                             <li>
+                                <a class="kt-dropdown-menu-link" data-kt-dropdown-dismiss="true" href="{{ route('dosen.elearning.grades.export.excel', $course) }}">
+                                    <span class="kt-menu-icon">
+                                        <i class="ki-filled ki-some-files"></i>
+                                    </span>
+                                    <span class="kt-menu-title">Excel (.xlsx)</span>
+                                </a>
+                             </li>
+                             <li>
+                                <a class="kt-dropdown-menu-link" data-kt-dropdown-dismiss="true" href="{{ route('dosen.elearning.grades.export.pdf', $course) }}">
+                                    <span class="kt-menu-icon">
+                                        <i class="ki-filled ki-document"></i>
+                                    </span>
+                                    <span class="kt-menu-title">PDF</span>
+                                </a>
+                             </li>
+                             
+                            </ul>
+                           </div>
                     </div>
                 </div>
-                <a href="{{ route('dosen.elearning.grades.settings', $course) }}" class="kt-btn kt-btn-outline" wire:navigate>
-                    <i class="ki-filled ki-setting-2"></i>
-                    Pengaturan Nilai
-                </a>
-                <button type="button" class="kt-btn kt-btn-outline" wire:click="toggleEditForm">
-                    <i class="ki-filled ki-notepad-edit"></i>
-                    Edit Kelas
-                </button>
-                <a href="{{ route('dosen.elearning.assignments.create', $course) }}" class="kt-btn kt-btn-outline" wire:navigate>
-                    <i class="ki-filled ki-clipboard"></i>
-                    Tambah Tugas
-                </a>
-                <a href="{{ route('dosen.elearning.materials.create', $course) }}" class="kt-btn kt-btn-primary" wire:navigate>
-                    <i class="ki-filled ki-plus"></i>
-                    Tambah Materi
-                </a>
+               
+                <div data-kt-dropdown="true" data-kt-dropdown-placement="bottom-end" data-kt-dropdown-placement-rtl="bottom-start" data-kt-dropdown-trigger="click" data-kt-dropdown-initialized="true" class="">
+                    <button class="kt-dropdown-toggle kt-btn kt-btn-primary" data-kt-dropdown-toggle="true">
+                        <i class="ki-filled ki-down"></i>
+                        Kelola Mata Kuliah
+                    </button>
+                    <div class="kt-dropdown-menu w-full max-w-[220px] hidden" data-kt-dropdown-menu="true" style="opacity: 0;">
+                     <ul class="kt-dropdown-menu-sub">
+                      <li>
+                        <button  class="kt-dropdown-menu-link" data-kt-dropdown-dismiss="true" wire:click="toggleEditForm">
+                            <i class="ki-filled ki-notepad-edit"></i>
+                            Edit Kelas
+                        </button>
+                      </li>
+                      <li>
+                        <a  href="{{ route('dosen.elearning.materials.create', $course) }}" class="kt-dropdown-menu-link" data-kt-dropdown-dismiss="true" wire:click="toggleEditForm">
+                            <i class="ki-filled ki-book"></i>
+                            Tambah Materi
+                        </a>
+                      </li>
+                      <li>
+                        <a  href="{{ route('dosen.elearning.assignments.create', $course) }}" class="kt-dropdown-menu-link" data-kt-dropdown-dismiss="true" wire:click="toggleEditForm">
+                            <i class="ki-filled ki-clipboard"></i>
+                            Tambah Tugas
+                        </a>
+                      </li>
+                      <li>
+                        <a href="{{ route('dosen.elearning.grades.settings', $course) }}" class="kt-dropdown-menu-link" data-kt-dropdown-dismiss="true" wire:click="toggleEditForm">
+                            <i class="ki-filled ki-setting-2"></i>
+                            Pengaturan Nilai
+                        </a>
+                      </li>
+                      <li>
+                        <div class="kt-dropdown-menu-separator"></div>
+                      </li>
+                      <li>
+                        <button type="button" class="kt-dropdown-menu-link text-destructive"
+                            data-kt-dropdown-dismiss="true" data-kt-modal-toggle="#delete_course_modal"
+                            wire:click="resetDeleteCourseForm">
+                            <i class="ki-filled ki-trash"></i>
+                            Hapus Kelas
+                        </button>
+                      </li>
+                     </ul>
+                    </div>
+                   </div>
             </div>
         </div>
     </div>
@@ -173,20 +223,25 @@
                                                 </h4>
                                                 <p class="mt-1 text-xs text-secondary-foreground">
                                                     {{ ucfirst($material->type) }}
-                                                    @if ($material->hasFile())
-                                                        · {{ $material->file_name }}
-                                                    @elseif ($material->content)
-                                                        · {{ \Illuminate\Support\Str::limit($material->content, 80) }}
-                                                    @endif
+                                                   
                                                 </p>
                                               
                                             </div>
                                         </div>
-                                        <button type="button" class="kt-btn kt-btn-sm kt-btn-outline text-destructive shrink-0"
-                                            wire:click="deleteMaterial({{ $material->id }})"
-                                            wire:confirm="Hapus materi ini?">
-                                            Hapus
-                                        </button>
+                                        <div class="flex shrink-0 items-center gap-2">
+                                            @if ($material->hasFile())
+                                                <a href="{{ $material->fileDownloadUrl() }}"
+                                                    class="kt-btn kt-btn-sm kt-btn-outline">
+                                                    <i class="ki-filled ki-cloud-download text-xs"></i>
+                                                    Unduh
+                                                </a>
+                                            @endif
+                                            <button type="button" class="kt-btn kt-btn-sm kt-btn-outline text-destructive"
+                                                wire:click="deleteMaterial({{ $material->id }})"
+                                                wire:confirm="Hapus materi ini?">
+                                                Hapus
+                                            </button>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
@@ -299,6 +354,57 @@
                     </div>
                 </div>
             @endif
+        </div>
+    </div>
+
+    <div class="kt-modal kt-modal-center" data-kt-modal="true" id="delete_course_modal" wire:ignore.self>
+        <div class="kt-modal-content max-w-[400px] w-full">
+            <div class="kt-modal-header">
+                <h3 class="kt-modal-title">Hapus Kelas</h3>
+                <button type="button" class="kt-modal-close" aria-label="Close modal"
+                    data-kt-modal-dismiss="#delete_course_modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="lucide lucide-x" aria-hidden="true">
+                        <path d="M18 6 6 18"></path>
+                        <path d="m6 6 12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <form wire:submit.prevent="deleteCourse">
+                <div class="kt-modal-body flex flex-col gap-4">
+                    <div class="kt-alert kt-alert-warning flex items-start gap-2">
+                        <i class="ki-filled ki-information-2 mt-0.5"></i>
+                        <div class="text-sm">
+                            Anda akan menghapus kelas <span class="font-semibold text-mono">{{ $course->title }}</span>
+                            ({{ $course->code }}). Semua materi, tugas, nilai, dan data mahasiswa terdaftar akan ikut
+                            terhapus. Tindakan ini tidak dapat dibatalkan.
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-medium text-mono" for="deleteCoursePassword">
+                            Masukkan password Anda untuk konfirmasi
+                        </label>
+                        <input id="deleteCoursePassword" type="password" class="kt-input"
+                            wire:model="deleteCoursePassword" autocomplete="current-password"
+                            placeholder="Password akun Anda" />
+                        @error('deleteCoursePassword')
+                            <span class="text-xs text-destructive">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="kt-modal-footer gap-2.5">
+                    <button type="button" class="kt-btn kt-btn-outline" data-kt-modal-dismiss="#delete_course_modal"
+                        wire:click="resetDeleteCourseForm">
+                        Batal
+                    </button>
+                    <button type="submit" class="kt-btn kt-btn-destructive" wire:loading.attr="disabled"
+                        wire:target="deleteCourse">
+                        <span wire:loading.remove wire:target="deleteCourse">Hapus Kelas</span>
+                        <span wire:loading wire:target="deleteCourse">Menghapus...</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

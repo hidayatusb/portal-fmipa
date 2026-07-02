@@ -25,8 +25,19 @@ new #[Layout('layouts::login')] class extends Component {
         $this->validate();
 
         if (Auth::attempt(['username' => $this->username, 'password' => $this->password])) {
+            $user = Auth::user();
+
+            if (! $user->isApproved()) {
+                $message = $user->approvalStatusMessage();
+                Auth::logout();
+                session()->flash('error', $message);
+
+                return back();
+            }
+
             session()->regenerate();
             session()->flash('success', 'Login berhasil!');
+
             return redirect()->intended('/dashboard');
         }
         session()->flash('error', 'Login gagal! Pastikan username dan password benar.');
@@ -48,7 +59,7 @@ new #[Layout('layouts::login')] class extends Component {
                 <span class="text-sm text-secondary-foreground me-1.5">
                     Need an account?
                 </span>
-                <a class="text-sm link" href="/metronic/tailwind/demo1/authentication/classic/sign-up/">
+                <a class="text-sm link" href="{{ route('register') }}" wire:navigate>
                     Sign up
                 </a>
             </div>

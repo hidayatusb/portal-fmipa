@@ -30,6 +30,12 @@ class AuthController extends ApiController
             ]);
         }
 
+        if (! $user->isApproved()) {
+            throw ValidationException::withMessages([
+                'username' => [$user->approvalStatusMessage()],
+            ]);
+        }
+
         $token = $user->createToken($credentials['device_name'] ?? 'mobile-app')->plainTextToken;
 
         return $this->success([

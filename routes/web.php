@@ -9,6 +9,7 @@ use App\Http\Controllers\Dosen\SubmissionController as DosenSubmissionController
 use App\Http\Controllers\Dosen\SubmissionFileController as DosenSubmissionFileController;
 use App\Http\Controllers\Mahasiswa\SubmissionFileController as MahasiswaSubmissionFileController;
 use App\Http\Controllers\ProfilePictureController;
+use App\Livewire\Admin\UserApprovals\Index as AdminUserApprovalsIndex;
 use App\Livewire\Dashboard\Index as DashboardIndex;
 use App\Livewire\Dosen\Elearning\CreateAssignment as DosenCreateAssignment;
 use App\Livewire\Dosen\Elearning\CreateMaterial as DosenCreateMaterial;
@@ -26,10 +27,14 @@ Route::get('/', function () {
     return redirect()->route('dashboard.index');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/dashboard', DashboardIndex::class)->name('dashboard.index');
     Route::get('/profil', ProfileEdit::class)->name('profile.edit');
     Route::get('/profil/foto', [ProfilePictureController::class, 'show'])->name('profile.picture');
+
+    Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/review-akun', AdminUserApprovalsIndex::class)->name('user-approvals.index');
+    });
 
     Route::middleware(['role:dosen'])->prefix('dosen')->name('dosen.')->group(function () {
         Route::get('/elearning', DosenElearningIndex::class)->name('elearning.index');
@@ -80,3 +85,4 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::livewire('/login', 'pages::login.index')->name('login');
+Route::livewire('/register', 'pages::register.index')->name('register');

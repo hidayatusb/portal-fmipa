@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Enums\UserApprovalStatus;
 use App\Enums\UserRole;
 use App\Http\Controllers\Api\ApiController;
 use App\Models\Course;
@@ -14,7 +15,10 @@ class DashboardController extends ApiController
     {
         return $this->success([
             'stats' => [
-                'users' => User::count(),
+                'pending_approvals' => User::query()
+                    ->whereIn('role', [UserRole::Dosen, UserRole::Mahasiswa])
+                    ->where('approval_status', UserApprovalStatus::Pending)
+                    ->count(),
                 'dosen' => User::where('role', UserRole::Dosen)->count(),
                 'mahasiswa' => User::where('role', UserRole::Mahasiswa)->count(),
                 'courses' => Course::count(),

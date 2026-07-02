@@ -25,6 +25,8 @@ class Show extends Component
 
     public string $editDescription = '';
 
+    public string $deleteCoursePassword = '';
+
     public function mount(Course $course): void
     {
         abort_unless($course->ownedBy(Auth::id()), 403);
@@ -89,6 +91,30 @@ class Show extends Component
 
         $this->course->load('materials');
         session()->flash('success', 'Materi berhasil dihapus.');
+    }
+
+    public function resetDeleteCourseForm(): void
+    {
+        $this->deleteCoursePassword = '';
+        $this->resetValidation();
+    }
+
+    public function deleteCourse(): void
+    {
+        abort_unless($this->course->ownedBy(Auth::id()), 403);
+
+        $this->validate([
+            'deleteCoursePassword' => ['required', 'current_password'],
+        ], [
+            'deleteCoursePassword.required' => 'Password wajib diisi untuk menghapus kelas.',
+            'deleteCoursePassword.current_password' => 'Password tidak sesuai.',
+        ]);
+
+        $this->course->delete();
+
+        session()->flash('success', 'Mata kuliah berhasil dihapus.');
+
+        $this->redirect(route('dosen.elearning.index'), navigate: true);
     }
 
     public function render(): View

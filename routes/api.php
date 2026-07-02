@@ -44,6 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/dashboard', AdminDashboardController::class);
         Route::get('/users', [AdminUserController::class, 'index']);
         Route::get('/users/{user}', [AdminUserController::class, 'show']);
+        Route::post('/users/{user}/approve', [AdminUserController::class, 'approve']);
+        Route::post('/users/{user}/reject', [AdminUserController::class, 'reject']);
     });
 
     Route::middleware('role:dosen')->prefix('dosen')->group(function () {
