@@ -75,7 +75,7 @@ new #[Layout('layouts::login')] class extends Component {
         <div class="kt-form-item">
             <label class="kt-form-label">NIM / NIDN / NIP :</label>
             <div class="kt-input">
-                <input type="text" class="kt-input" placeholder="Masukkan Username" aria-invalid="true"
+                <input type="text" class="kt-input" placeholder="Masukkan NIM / NIDN / NIP" aria-invalid="true"
                     wire:model="username" />
 
             </div>
