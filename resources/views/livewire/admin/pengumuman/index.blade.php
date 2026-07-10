@@ -46,6 +46,7 @@
                                 <tr>
                                     <th class="min-w-[80px]">Gambar</th>
                                     <th class="min-w-[220px]">Judul</th>
+                                    <th class="w-24">Tipe</th>
                                     <th class="min-w-[280px]">Isi</th>
                                     <th class="w-32">Status</th>
                                     <th class="w-40">Tanggal</th>
@@ -76,9 +77,21 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <p class="line-clamp-2 text-sm text-secondary-foreground">
-                                                {{ $announcement->body }}
-                                            </p>
+                                            <span class="kt-badge kt-badge-outline">
+                                                {{ $announcement->content_type->label() }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if ($announcement->isUrlContent())
+                                                <a href="{{ $announcement->body }}" target="_blank" rel="noopener"
+                                                    class="line-clamp-2 text-sm text-primary break-all">
+                                                    {{ $announcement->body }}
+                                                </a>
+                                            @else
+                                                <p class="line-clamp-2 text-sm text-secondary-foreground">
+                                                    {{ $announcement->body }}
+                                                </p>
+                                            @endif
                                         </td>
                                         <td>
                                             @if ($announcement->is_published)

@@ -13,7 +13,14 @@
                     @endif
                     <div class="flex flex-col gap-1.5">
                         <h4 class="text-base font-semibold text-mono">{{ $announcement->title }}</h4>
-                        <p class="whitespace-pre-line text-sm text-secondary-foreground">{{ $announcement->body }}</p>
+                        @if ($announcement->isUrlContent())
+                            <a href="{{ $announcement->body }}" target="_blank" rel="noopener"
+                                class="text-sm text-primary break-all">
+                                {{ $announcement->body }}
+                            </a>
+                        @else
+                            <p class="whitespace-pre-line text-sm text-secondary-foreground">{{ $announcement->body }}</p>
+                        @endif
                         <span class="text-xs text-muted-foreground">
                             {{ optional($announcement->published_at)->timezone(config('app.timezone'))->translatedFormat('d M Y, H:i') }}
                         </span>

@@ -238,7 +238,10 @@ Daftar pengumuman publik.
     {
       "id": 1,
       "title": "Jadwal UTS",
+      "content_type": "text",
+      "content_type_label": "Teks",
       "body": "UTS dilaksanakan minggu depan.",
+      "url": null,
       "has_image": true,
       "image_url": "http://.../api/announcements/1/image?v=...",
       "is_published": true,
@@ -256,6 +259,9 @@ Daftar pengumuman publik.
   }
 }
 ```
+
+> `content_type`: `text` (isi di `body`) atau `url` (tautan di `body`, juga tersedia di field `url`).  
+> `image` **wajib** saat membuat pengumuman.
 
 ### GET `/announcements/{announcement}`
 
@@ -485,15 +491,16 @@ Tolak akun (dosen/mahasiswa yang pending).
 | PUT/PATCH/POST | `/admin/announcements/{announcement}` | Update |
 | DELETE | `/admin/announcements/{announcement}` | Hapus |
 
-**Query GET `/admin/announcements`:** `search`, `is_published` (`true`/`false`), `per_page`
+**Query GET `/admin/announcements`:** `search`, `is_published` (`true`/`false`), `content_type` (`text`/`url`), `per_page`
 
 **POST `/admin/announcements` — multipart**
 
 | Field | Tipe | Wajib | Keterangan |
 |-------|------|-------|------------|
 | title | string | ya | Judul (min 3, max 200) |
-| body | string | ya | Isi teks |
-| image | file | tidak | Gambar JPG/PNG/GIF/WEBP, maks. 4 MB |
+| content_type | string | ya | `text` atau `url` |
+| body | string | ya | Teks isi, atau URL jika `content_type=url` |
+| image | file | ya | Gambar JPG/PNG/GIF/WEBP, maks. 4 MB |
 | is_published | boolean | tidak | Default `true` |
 
 **Update — multipart** (disarankan `POST` agar upload gambar lancar di mobile)
@@ -501,9 +508,9 @@ Tolak akun (dosen/mahasiswa yang pending).
 | Field | Tipe | Keterangan |
 |-------|------|------------|
 | title | string | Opsional |
-| body | string | Opsional |
-| image | file | Ganti gambar |
-| remove_image | boolean | `true` untuk hapus gambar |
+| content_type | string | `text` atau `url` |
+| body | string | Teks atau URL sesuai tipe |
+| image | file | Ganti gambar (wajib jika belum ada gambar) |
 | is_published | boolean | Publikasikan / draft |
 
 Gambar tetap diunduh lewat `GET /announcements/{id}/image` (shared).
@@ -743,7 +750,10 @@ Ringkasan dashboard mahasiswa.
 {
   "id": 1,
   "title": "Jadwal UTS",
+  "content_type": "text",
+  "content_type_label": "Teks",
   "body": "UTS dilaksanakan minggu depan.",
+  "url": null,
   "has_image": true,
   "image_url": "http://.../api/announcements/1/image?v=1710000000",
   "is_published": true,
@@ -751,6 +761,17 @@ Ringkasan dashboard mahasiswa.
   "author": { "id": 1, "name": "Admin" },
   "created_at": "2026-07-10T10:00:00+08:00",
   "updated_at": "2026-07-10T10:00:00+08:00"
+}
+```
+
+Contoh tipe URL:
+
+```json
+{
+  "content_type": "url",
+  "content_type_label": "URL",
+  "body": "https://fmipa.example.com/pengumuman/uts",
+  "url": "https://fmipa.example.com/pengumuman/uts"
 }
 ```
 

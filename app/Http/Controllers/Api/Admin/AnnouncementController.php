@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Enums\AnnouncementContentType;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Resources\AnnouncementResource;
 use App\Models\Announcement;
@@ -9,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class AnnouncementController extends ApiController
 {
@@ -18,6 +20,9 @@ class AnnouncementController extends ApiController
             ->with('author')
             ->when($request->filled('is_published'), function ($query) use ($request) {
                 $query->where('is_published', $request->boolean('is_published'));
+            })
+            ->when($request->filled('content_type'), function ($query) use ($request) {
+                $query->where('content_type', $request->string('content_type'));
             })
             ->when($request->filled('search'), function ($query) use ($request) {
                 $term = '%'.$request->string('search').'%';
@@ -51,25 +56,16 @@ class AnnouncementController extends ApiController
 
     public function store(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'min:3', 'max:200'],
-            'body' => ['required', 'string', 'min:3'],
-            'image' => ['nullable', 'image', 'max:4096'],
-            'is_published' => ['nullable', 'boolean'],
-        ]);
+        $validated = $this->validatePayload($request, requireImage: true);
 
         $isPublished = $request->boolean('is_published', true);
-        $imagePath = null;
-
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('announcements', 'public');
-        }
 
         $announcement = Announcement::query()->create([
             'user_id' => Auth::id(),
             'title' => $validated['title'],
+            'content_type' => $validated['content_type'],
             'body' => $validated['body'],
-            'image_path' => $imagePath,
+            'image_path' => $request->file('image')->store('announcements', 'public'),
             'is_published' => $isPublished,
             'published_at' => $isPublished ? now() : null,
         ]);
@@ -85,16 +81,14 @@ class AnnouncementController extends ApiController
 
     public function update(Request $request, Announcement $announcement): JsonResponse
     {
-        $validated = $request->validate([
-            'title' => ['sometimes', 'required', 'string', 'min:3', 'max:200'],
-            'body' => ['sometimes', 'required', 'string', 'min:3'],
-            'image' => ['nullable', 'image', 'max:4096'],
-            'remove_image' => ['nullable', 'boolean'],
-            'is_published' => ['nullable', 'boolean'],
-        ]);
+        $validated = $this->validatePayload($request, requireImage: ! $announcement->hasImage(), sometimes: true);
 
         if (array_key_exists('title', $validated)) {
             $announcement->title = $validated['title'];
+        }
+
+        if (array_key_exists('content_type', $validated)) {
+            $announcement->content_type = $validated['content_type'];
         }
 
         if (array_key_exists('body', $validated)) {
@@ -110,10 +104,7 @@ class AnnouncementController extends ApiController
             }
         }
 
-        if ($request->boolean('remove_image') && $announcement->image_path) {
-            Storage::disk('public')->delete($announcement->image_path);
-            $announcement->image_path = null;
-        } elseif ($request->hasFile('image')) {
+        if ($request->hasFile('image')) {
             if ($announcement->image_path) {
                 Storage::disk('public')->delete($announcement->image_path);
             }
@@ -132,8 +123,42 @@ class AnnouncementController extends ApiController
 
     public function destroy(Announcement $announcement): JsonResponse
     {
-        $announcement->delete();
+        Announcement::destroy($announcement->id);
 
-        return $this->success(message: 'Pengumuman berhasil dihapus.');
+        return $this->success(null, 'Pengumuman berhasil dihapus.');
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function validatePayload(Request $request, bool $requireImage, bool $sometimes = false): array
+    {
+        $contentType = $request->input('content_type', AnnouncementContentType::Text->value);
+
+        $bodyRules = $contentType === AnnouncementContentType::Url->value
+            ? ['required', 'url', 'max:2000']
+            : ['required', 'string', 'min:3'];
+
+        if ($sometimes) {
+            $bodyRules = array_merge(['sometimes'], $bodyRules);
+        }
+
+        return $request->validate([
+            'title' => array_values(array_filter([
+                $sometimes ? 'sometimes' : null,
+                'required',
+                'string',
+                'min:3',
+                'max:200',
+            ])),
+            'content_type' => array_values(array_filter([
+                $sometimes ? 'sometimes' : null,
+                'required',
+                Rule::enum(AnnouncementContentType::class),
+            ])),
+            'body' => $bodyRules,
+            'image' => [$requireImage ? 'required' : 'nullable', 'image', 'max:4096'],
+            'is_published' => ['nullable', 'boolean'],
+        ]);
     }
 }

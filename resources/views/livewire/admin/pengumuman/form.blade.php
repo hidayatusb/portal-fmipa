@@ -6,7 +6,7 @@
                     {{ $pageTitle }}
                 </h1>
                 <p class="text-sm font-normal text-secondary-foreground">
-                    Masukkan judul, teks, dan gambar pengumuman
+                    Pilih tipe konten (teks atau URL), lalu unggah gambar
                 </p>
             </div>
             <a href="{{ route('admin.pengumuman.index') }}" class="kt-btn kt-btn-outline" wire:navigate>
@@ -31,19 +31,45 @@
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <label class="text-sm font-medium text-mono" for="body">Isi Pengumuman</label>
-                    <textarea id="body" class="kt-textarea min-h-40" wire:model="body" rows="8"
-                        placeholder="Tulis isi pengumuman di sini..."></textarea>
+                    <label class="text-sm font-medium text-mono" for="content_type">Tipe Konten</label>
+                    <select id="content_type" class="kt-select" wire:model.live="content_type">
+                        <option value="text">Teks</option>
+                        <option value="url">URL</option>
+                    </select>
+                    @error('content_type')
+                        <span class="text-xs text-destructive">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    @if ($content_type === 'url')
+                        <label class="text-sm font-medium text-mono" for="body">URL</label>
+                        <input id="body" type="url" class="kt-input" wire:model="body"
+                            placeholder="https://example.com/pengumuman" />
+                        <p class="text-xs text-secondary-foreground">
+                            Tautan yang akan dibuka pengguna dari pengumuman ini.
+                        </p>
+                    @else
+                        <label class="text-sm font-medium text-mono" for="body">Isi Pengumuman</label>
+                        <textarea id="body" class="kt-textarea min-h-40" wire:model="body" rows="8"
+                            placeholder="Tulis isi pengumuman di sini..."></textarea>
+                    @endif
                     @error('body')
                         <span class="text-xs text-destructive">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="flex flex-col gap-2">
-                    <label class="text-sm font-medium text-mono" for="image">Gambar</label>
+                    <label class="text-sm font-medium text-mono" for="image">
+                        Gambar
+                        @if ($imageRequired)
+                            <span class="text-destructive">*</span>
+                        @endif
+                    </label>
                     <input id="image" type="file" class="kt-input" wire:model="image" accept="image/*" />
                     <p class="text-xs text-secondary-foreground">
-                        Opsional. Format JPG, PNG, GIF, atau WEBP. Maks. 4 MB.
+                        {{ $imageRequired ? 'Wajib.' : 'Opsional jika gambar sudah ada.' }}
+                        Format JPG, PNG, GIF, atau WEBP. Maks. 4 MB.
                     </p>
                     @error('image')
                         <span class="text-xs text-destructive">{{ $message }}</span>
@@ -76,25 +102,13 @@
                         </div>
                     @elseif ($existingImageUrl)
                         <div class="kt-card border border-border">
-                            <div class="kt-card-content flex items-center justify-between gap-4 p-4">
-                                <div class="flex min-w-0 items-center gap-3">
-                                    <img src="{{ $existingImageUrl }}" alt="Gambar pengumuman"
-                                        class="size-20 rounded-lg border border-border object-cover" />
-                                    <p class="text-sm text-secondary-foreground">Gambar saat ini</p>
-                                </div>
-                                <button type="button" class="kt-btn kt-btn-sm kt-btn-outline text-destructive"
-                                    wire:click="markRemoveExistingImage">
-                                    Hapus
-                                </button>
+                            <div class="kt-card-content flex items-center gap-3 p-4">
+                                <img src="{{ $existingImageUrl }}" alt="Gambar pengumuman"
+                                    class="size-20 rounded-lg border border-border object-cover" />
+                                <p class="text-sm text-secondary-foreground">
+                                    Gambar saat ini. Unggah file baru untuk mengganti.
+                                </p>
                             </div>
-                        </div>
-                    @elseif (property_exists($this, 'removeExistingImage') && $this->removeExistingImage)
-                        <div class="flex items-center justify-between gap-3 rounded-lg border border-dashed border-border p-4">
-                            <p class="text-sm text-secondary-foreground">Gambar akan dihapus saat disimpan.</p>
-                            <button type="button" class="kt-btn kt-btn-sm kt-btn-outline"
-                                wire:click="undoRemoveExistingImage">
-                                Batalkan
-                            </button>
                         </div>
                     @endif
                 </div>

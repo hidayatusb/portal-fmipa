@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AnnouncementContentType;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,16 +13,25 @@ class Announcement extends Model
     protected $fillable = [
         'user_id',
         'title',
+        'content_type',
         'body',
         'image_path',
         'is_published',
         'published_at',
     ];
 
+    /**
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'content_type' => AnnouncementContentType::Text,
+    ];
+
     protected function casts(): array
     {
         return [
             'user_id' => 'integer',
+            'content_type' => AnnouncementContentType::class,
             'is_published' => 'boolean',
             'published_at' => 'datetime',
         ];
@@ -47,6 +57,16 @@ class Announcement extends Model
             ->where('is_published', true)
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now());
+    }
+
+    public function isUrlContent(): bool
+    {
+        return $this->content_type === AnnouncementContentType::Url;
+    }
+
+    public function isTextContent(): bool
+    {
+        return $this->content_type === AnnouncementContentType::Text;
     }
 
     public function hasImage(): bool

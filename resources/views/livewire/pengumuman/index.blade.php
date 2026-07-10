@@ -44,9 +44,18 @@
                                     @endif
                                 </p>
                             </div>
-                            <p class="whitespace-pre-line text-sm leading-relaxed text-secondary-foreground">
-                                {{ $announcement->body }}
-                            </p>
+                            @if ($announcement->isUrlContent())
+                                <a href="{{ $announcement->body }}" target="_blank" rel="noopener"
+                                    class="kt-btn kt-btn-primary kt-btn-sm self-start">
+                                    <i class="ki-filled ki-exit-right-corner"></i>
+                                    Buka Tautan
+                                </a>
+                                <p class="break-all text-xs text-secondary-foreground">{{ $announcement->body }}</p>
+                            @else
+                                <p class="whitespace-pre-line text-sm leading-relaxed text-secondary-foreground">
+                                    {{ $announcement->body }}
+                                </p>
+                            @endif
                         </div>
                     </article>
                 @endforeach

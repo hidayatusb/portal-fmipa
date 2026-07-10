@@ -13,7 +13,10 @@ class AnnouncementResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
+            'content_type' => $this->content_type->value,
+            'content_type_label' => $this->content_type->label(),
             'body' => $this->body,
+            'url' => $this->isUrlContent() ? $this->body : null,
             'has_image' => $this->hasImage(),
             'image_url' => $this->imageApiUrl(),
             'is_published' => $this->is_published,
