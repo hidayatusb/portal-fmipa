@@ -47,6 +47,18 @@
                         </span>
                     </a>
                 </div>
+                <div class="kt-menu-item">
+                    <a class="kt-menu-link kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 grow items-center gap-[10px] border border-transparent py-[6px] pe-[10px] ps-[10px] hover:rounded-lg {{ request()->routeIs('pengumuman.*') ? 'kt-menu-item-active' : '' }}"
+                        href="{{ route('pengumuman.index') }}" wire:navigate tabindex="0">
+                        <span class="kt-menu-icon w-[20px] items-start text-muted-foreground">
+                            <i class="ki-filled ki-notification-status text-lg"></i>
+                        </span>
+                        <span
+                            class="kt-menu-title kt-menu-item-active:text-primary kt-menu-item-active:font-semibold kt-menu-link-hover:!text-primary text-sm font-medium text-foreground">
+                            Pengumuman
+                        </span>
+                    </a>
+                </div>
 
                 @if ($user?->isDosen())
                     <div class="kt-menu-item pt-2.25 pb-px">
@@ -106,6 +118,18 @@
                             <span
                                 class="kt-menu-title kt-menu-item-active:text-primary kt-menu-item-active:font-semibold kt-menu-link-hover:!text-primary text-sm font-medium text-foreground">
                                 Review Akun
+                            </span>
+                        </a>
+                    </div>
+                    <div class="kt-menu-item">
+                        <a class="kt-menu-link kt-menu-item-active:bg-accent/60 dark:menu-item-active:border-border kt-menu-item-active:rounded-lg hover:bg-accent/60 grow items-center gap-[10px] border border-transparent py-[6px] pe-[10px] ps-[10px] hover:rounded-lg {{ request()->routeIs('admin.pengumuman.*') ? 'kt-menu-item-active' : '' }}"
+                            href="{{ route('admin.pengumuman.index') }}" wire:navigate tabindex="0">
+                            <span class="kt-menu-icon w-[20px] items-start text-muted-foreground">
+                                <i class="ki-filled ki-setting-2 text-lg"></i>
+                            </span>
+                            <span
+                                class="kt-menu-title kt-menu-item-active:text-primary kt-menu-item-active:font-semibold kt-menu-link-hover:!text-primary text-sm font-medium text-foreground">
+                                Kelola Pengumuman
                             </span>
                         </a>
                     </div>

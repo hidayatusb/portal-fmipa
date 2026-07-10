@@ -79,7 +79,6 @@ new #[Layout('layouts::login')] class extends Component {
                     wire:model="username" />
 
             </div>
-            
             @error('username')
                 <div class="kt-form-message">{{ $message }}</div>
             @enderror

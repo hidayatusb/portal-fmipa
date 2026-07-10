@@ -10,15 +10,11 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 #[Layout('layouts.demo1.base')]
 class Index extends Component
 {
     use SetsBreadcrumbs;
-    use WithPagination;
-
-    public string $search = '';
 
     public string $status = 'pending';
 
@@ -30,16 +26,6 @@ class Index extends Component
             ['label' => 'Home', 'url' => route('dashboard.index')],
             ['label' => 'Review Akun'],
         ]);
-    }
-
-    public function updatedSearch(): void
-    {
-        $this->resetPage();
-    }
-
-    public function updatedStatus(): void
-    {
-        $this->resetPage();
     }
 
     public function approve(int $userId): void
@@ -74,21 +60,13 @@ class Index extends Component
 
     public function render(): View
     {
-        $status = UserApprovalStatus::tryFrom($this->status);
+        $status = $this->status === 'all' ? null : UserApprovalStatus::tryFrom($this->status);
 
         $users = User::query()
             ->whereIn('role', [UserRole::Dosen, UserRole::Mahasiswa])
             ->when($status, fn ($query) => $query->where('approval_status', $status))
-            ->when(trim($this->search) !== '', function ($query) {
-                $term = '%'.trim($this->search).'%';
-                $query->where(function ($inner) use ($term) {
-                    $inner->where('name', 'like', $term)
-                        ->orWhere('username', 'like', $term)
-                        ->orWhere('email', 'like', $term);
-                });
-            })
             ->latest()
-            ->paginate(10);
+            ->get();
 
         $pendingCount = User::query()
             ->whereIn('role', [UserRole::Dosen, UserRole::Mahasiswa])

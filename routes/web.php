@@ -8,7 +8,11 @@ use App\Http\Controllers\Mahasiswa\MaterialFileController as MahasiswaMaterialFi
 use App\Http\Controllers\Dosen\SubmissionController as DosenSubmissionController;
 use App\Http\Controllers\Dosen\SubmissionFileController as DosenSubmissionFileController;
 use App\Http\Controllers\Mahasiswa\SubmissionFileController as MahasiswaSubmissionFileController;
+use App\Http\Controllers\AnnouncementImageController;
 use App\Http\Controllers\ProfilePictureController;
+use App\Livewire\Admin\Pengumuman\Create as AdminPengumumanCreate;
+use App\Livewire\Admin\Pengumuman\Edit as AdminPengumumanEdit;
+use App\Livewire\Admin\Pengumuman\Index as AdminPengumumanIndex;
 use App\Livewire\Admin\UserApprovals\Index as AdminUserApprovalsIndex;
 use App\Livewire\Dashboard\Index as DashboardIndex;
 use App\Livewire\Dosen\Elearning\CreateAssignment as DosenCreateAssignment;
@@ -20,6 +24,7 @@ use App\Livewire\Dosen\Elearning\ShowAssignment as DosenShowAssignment;
 use App\Livewire\Mahasiswa\Elearning\Index as MahasiswaElearningIndex;
 use App\Livewire\Mahasiswa\Elearning\Show as MahasiswaElearningShow;
 use App\Livewire\Mahasiswa\Elearning\ShowAssignment as MahasiswaShowAssignment;
+use App\Livewire\Pengumuman\Index as PengumumanIndex;
 use App\Livewire\Profile\Edit as ProfileEdit;
 use Illuminate\Support\Facades\Route;
 
@@ -31,9 +36,15 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/dashboard', DashboardIndex::class)->name('dashboard.index');
     Route::get('/profil', ProfileEdit::class)->name('profile.edit');
     Route::get('/profil/foto', [ProfilePictureController::class, 'show'])->name('profile.picture');
+    Route::get('/pengumuman', PengumumanIndex::class)->name('pengumuman.index');
+    Route::get('/pengumuman/{announcement}/gambar', [AnnouncementImageController::class, 'show'])
+        ->name('announcements.image');
 
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/review-akun', AdminUserApprovalsIndex::class)->name('user-approvals.index');
+        Route::get('/pengumuman', AdminPengumumanIndex::class)->name('pengumuman.index');
+        Route::get('/pengumuman/tambah', AdminPengumumanCreate::class)->name('pengumuman.create');
+        Route::get('/pengumuman/{announcement}/edit', AdminPengumumanEdit::class)->name('pengumuman.edit');
     });
 
     Route::middleware(['role:dosen'])->prefix('dosen')->name('dosen.')->group(function () {

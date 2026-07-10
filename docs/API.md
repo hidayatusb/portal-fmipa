@@ -213,6 +213,62 @@ Tandai semua notifikasi dibaca.
 
 ---
 
+## Pengumuman (Semua Role)
+
+**Auth required · Role: admin, dosen, mahasiswa.**
+
+Endpoint **read** ini bisa diakses semua role yang sudah login. Hanya pengumuman yang **dipublikasikan** yang tampil.  
+CRUD (buat/edit/hapus) hanya di `/admin/announcements` (role admin).
+
+### GET `/announcements`
+
+Daftar pengumuman publik.
+
+**Query**
+
+| Param | Default | Keterangan |
+|-------|---------|------------|
+| per_page | 20 | Jumlah per halaman |
+
+**Response `data`**
+
+```json
+{
+  "items": [
+    {
+      "id": 1,
+      "title": "Jadwal UTS",
+      "body": "UTS dilaksanakan minggu depan.",
+      "has_image": true,
+      "image_url": "http://.../api/announcements/1/image?v=...",
+      "is_published": true,
+      "published_at": "2026-07-10T10:00:00+08:00",
+      "author": { "id": 1, "name": "Admin" },
+      "created_at": "2026-07-10T10:00:00+08:00",
+      "updated_at": "2026-07-10T10:00:00+08:00"
+    }
+  ],
+  "meta": {
+    "current_page": 1,
+    "last_page": 1,
+    "per_page": 20,
+    "total": 1
+  }
+}
+```
+
+### GET `/announcements/{announcement}`
+
+Detail satu pengumuman publik.
+
+### GET `/announcements/{announcement}/image`
+
+Stream gambar pengumuman. **Wajib kirim Bearer token.** Response `Content-Disposition: inline`.
+
+> `image_url` di response JSON mengarah ke endpoint ini. Bukan URL publik storage.
+
+---
+
 ## Push Notification (FCM) — Hybrid (Topic + Token)
 
 Push **melengkapi** notifikasi database. Model **hybrid**:
@@ -408,6 +464,49 @@ Daftar user.
 ### GET `/admin/users/{user}`
 
 Detail user.
+
+### POST `/admin/users/{user}/approve`
+
+Setujui akun (dosen/mahasiswa yang pending).
+
+### POST `/admin/users/{user}/reject`
+
+Tolak akun (dosen/mahasiswa yang pending).
+
+---
+
+### Pengumuman (Admin)
+
+| Method | Endpoint | Keterangan |
+|--------|----------|------------|
+| GET | `/admin/announcements` | Daftar semua (termasuk draft) |
+| POST | `/admin/announcements` | Buat pengumuman |
+| GET | `/admin/announcements/{announcement}` | Detail |
+| PUT/PATCH/POST | `/admin/announcements/{announcement}` | Update |
+| DELETE | `/admin/announcements/{announcement}` | Hapus |
+
+**Query GET `/admin/announcements`:** `search`, `is_published` (`true`/`false`), `per_page`
+
+**POST `/admin/announcements` — multipart**
+
+| Field | Tipe | Wajib | Keterangan |
+|-------|------|-------|------------|
+| title | string | ya | Judul (min 3, max 200) |
+| body | string | ya | Isi teks |
+| image | file | tidak | Gambar JPG/PNG/GIF/WEBP, maks. 4 MB |
+| is_published | boolean | tidak | Default `true` |
+
+**Update — multipart** (disarankan `POST` agar upload gambar lancar di mobile)
+
+| Field | Tipe | Keterangan |
+|-------|------|------------|
+| title | string | Opsional |
+| body | string | Opsional |
+| image | file | Ganti gambar |
+| remove_image | boolean | `true` untuk hapus gambar |
+| is_published | boolean | Publikasikan / draft |
+
+Gambar tetap diunduh lewat `GET /announcements/{id}/image` (shared).
 
 ---
 
@@ -637,6 +736,25 @@ Ringkasan dashboard mahasiswa.
 ---
 
 ## Objek Data Penting
+
+### Announcement (Pengumuman)
+
+```json
+{
+  "id": 1,
+  "title": "Jadwal UTS",
+  "body": "UTS dilaksanakan minggu depan.",
+  "has_image": true,
+  "image_url": "http://.../api/announcements/1/image?v=1710000000",
+  "is_published": true,
+  "published_at": "2026-07-10T10:00:00+08:00",
+  "author": { "id": 1, "name": "Admin" },
+  "created_at": "2026-07-10T10:00:00+08:00",
+  "updated_at": "2026-07-10T10:00:00+08:00"
+}
+```
+
+> `image_url` adalah endpoint stream API. Request harus menyertakan header `Authorization: Bearer {token}`.
 
 ### Material
 

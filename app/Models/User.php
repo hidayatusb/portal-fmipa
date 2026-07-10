@@ -127,6 +127,32 @@ class User extends Authenticatable
         return $this->resolvedApprovalStatus() === UserApprovalStatus::Rejected;
     }
 
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
+     * @param  list<UserRole|string>  $roles
+     * @return \Illuminate\Database\Eloquent\Builder<self>
+     */
+    public function scopeWhereRoleIn($query, array $roles)
+    {
+        $values = array_map(
+            fn (UserRole|string $role) => $role instanceof UserRole ? $role->value : $role,
+            $roles,
+        );
+
+        return $query->whereIn('role', $values, 'and', false);
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
+     * @return \Illuminate\Database\Eloquent\Builder<self>
+     */
+    public function scopeWhereApprovalStatus($query, UserApprovalStatus|string $status)
+    {
+        $value = $status instanceof UserApprovalStatus ? $status->value : $status;
+
+        return $query->where('approval_status', '=', $value, 'and');
+    }
+
     public function approvalStatusMessage(): string
     {
         return match ($this->resolvedApprovalStatus()) {

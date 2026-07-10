@@ -52,7 +52,17 @@
                         <span class="kt-badge kt-badge-xs kt-badge-light">{{ $stats['pending'] }}</span>
                     @endif
                 </a>
+                <a href="{{ route('admin.pengumuman.index') }}" class="kt-btn kt-btn-outline" wire:navigate>
+                    <i class="ki-filled ki-notification-status"></i>
+                    Kelola Pengumuman
+                </a>
+                <a href="{{ route('admin.pengumuman.create') }}" class="kt-btn kt-btn-outline" wire:navigate>
+                    <i class="ki-filled ki-plus-squared"></i>
+                    Tambah Pengumuman
+                </a>
             </div>
         </div>
+
+        @include('livewire.dashboard.partials.announcements', ['announcements' => $announcements])
     </div>
 </div>

@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\AnnouncementController as AdminAnnouncementController;
 use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Api\AnnouncementController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Dosen\AssignmentController as DosenAssignmentController;
 use App\Http\Controllers\Api\Dosen\CourseController as DosenCourseController;
@@ -36,6 +38,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
     Route::post('/notifications/{notificationId}/read', [NotificationController::class, 'markAsRead']);
 
+    Route::get('/announcements', [AnnouncementController::class, 'index']);
+    Route::get('/announcements/{announcement}', [AnnouncementController::class, 'show']);
+    Route::get('/announcements/{announcement}/image', [AnnouncementController::class, 'image'])
+        ->name('api.announcements.image');
+
     Route::post('/device-tokens', [DeviceTokenController::class, 'store']);
     Route::delete('/device-tokens', [DeviceTokenController::class, 'destroy']);
     Route::get('/fcm/topics', [FcmTopicController::class, 'index']);
@@ -46,6 +53,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/users/{user}', [AdminUserController::class, 'show']);
         Route::post('/users/{user}/approve', [AdminUserController::class, 'approve']);
         Route::post('/users/{user}/reject', [AdminUserController::class, 'reject']);
+
+        Route::get('/announcements', [AdminAnnouncementController::class, 'index']);
+        Route::post('/announcements', [AdminAnnouncementController::class, 'store']);
+        Route::get('/announcements/{announcement}', [AdminAnnouncementController::class, 'show']);
+        Route::match(['put', 'patch', 'post'], '/announcements/{announcement}', [AdminAnnouncementController::class, 'update']);
+        Route::delete('/announcements/{announcement}', [AdminAnnouncementController::class, 'destroy']);
     });
 
     Route::middleware('role:dosen')->prefix('dosen')->group(function () {

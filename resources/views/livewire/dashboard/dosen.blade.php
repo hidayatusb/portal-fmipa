@@ -77,5 +77,7 @@
                 @endif
             </div>
         </div>
+
+        @include('livewire.dashboard.partials.announcements', ['announcements' => $announcements])
     </div>
 </div>

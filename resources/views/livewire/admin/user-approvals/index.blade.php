@@ -25,81 +25,131 @@
             </div>
         @endif
 
-        <div class="kt-card mb-5">
-            <div class="kt-card-content flex flex-col gap-4 p-5 lg:flex-row lg:items-end">
-                <div class="flex flex-col gap-2 grow">
-                    <label class="text-sm font-medium text-mono" for="search">Cari</label>
-                    <input id="search" type="text" class="kt-input" wire:model.live.debounce.300ms="search"
-                        placeholder="Nama, username, atau email..." />
-                </div>
-                <div class="flex flex-col gap-2 w-full lg:w-56">
-                    <label class="text-sm font-medium text-mono" for="status">Status</label>
-                    <select id="status" class="kt-select" wire:model.live="status">
+        <div class="grid w-full space-y-5">
+            <div class="kt-card">
+                <div class="kt-card-header min-h-16 flex-wrap gap-3">
+                    <input type="text" placeholder="Cari akun..." class="kt-input sm:w-48"
+                        data-kt-datatable-search="#kt_datatable_user_approvals" />
+                    <select class="kt-select sm:w-48" wire:model.live="status">
+                        <option value="all">Semua Status</option>
                         <option value="pending">Menunggu Review</option>
                         <option value="approved">Disetujui</option>
                         <option value="rejected">Ditolak</option>
                     </select>
                 </div>
-            </div>
-        </div>
-
-        <div class="kt-card">
-            <div class="kt-card-header">
-                <h3 class="kt-card-title">Daftar Akun</h3>
-            </div>
-            <div class="kt-card-content p-0">
-                @if ($users->isEmpty())
-                    <div class="flex flex-col items-center gap-3 p-10 text-center">
-                        <i class="ki-filled ki-people text-4xl text-muted-foreground"></i>
-                        <p class="text-sm text-secondary-foreground">Tidak ada akun yang cocok dengan filter ini.</p>
-                    </div>
-                @else
-                    <div class="divide-y divide-border">
-                        @foreach ($users as $user)
-                            <div class="flex flex-wrap items-start justify-between gap-4 p-5" wire:key="user-{{ $user->id }}">
-                                <div class="min-w-0">
-                                    <div class="flex flex-wrap items-center gap-2">
-                                        <h4 class="text-sm font-semibold text-mono">{{ $user->name }}</h4>
-                                        <span class="kt-badge kt-badge-sm kt-badge-outline">{{ $user->role->label() }}</span>
-                                        <span class="kt-badge kt-badge-sm {{ $user->approval_status->badgeClass() }}">
-                                            {{ $user->approval_status->label() }}
+                <div id="kt_datatable_user_approvals" class="kt-card-table" data-kt-datatable="true"
+                    data-kt-datatable-page-size="10" data-kt-datatable-state-save="true" wire:key="user-approvals-datatable">
+                    <div class="kt-table-wrapper kt-scrollable">
+                        <table class="kt-table" data-kt-datatable-table="true">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="min-w-[160px]" data-kt-datatable-column="name">
+                                        <span class="kt-table-col">
+                                            <span class="kt-table-col-label">Nama</span>
+                                            <span class="kt-table-col-sort"></span>
                                         </span>
-                                    </div>
-                                    <p class="mt-1 text-xs text-secondary-foreground">
-                                        {{ $user->username }} · {{ $user->email }}
-                                    </p>
-                                    <p class="mt-1 text-xs text-muted-foreground">
-                                        Daftar {{ $user->created_at->format('d M Y, H:i') }}
-                                    </p>
-                                </div>
-
-                                @if ($user->isPendingApproval())
-                                    <div class="flex shrink-0 items-center gap-2">
-                                        <button type="button" class="kt-btn kt-btn-sm kt-btn-primary"
-                                            wire:click="approve({{ $user->id }})"
-                                            wire:confirm="Setujui akun {{ $user->name }}?">
-                                            <i class="ki-filled ki-check text-xs"></i>
-                                            Setujui
-                                        </button>
-                                        <button type="button" class="kt-btn kt-btn-sm kt-btn-outline text-destructive"
-                                            wire:click="reject({{ $user->id }})"
-                                            wire:confirm="Tolak akun {{ $user->name }}?">
-                                            <i class="ki-filled ki-cross text-xs"></i>
-                                            Tolak
-                                        </button>
-                                    </div>
-                                @endif
-                            </div>
-                        @endforeach
+                                    </th>
+                                    <th scope="col" class="min-w-[120px]" data-kt-datatable-column="username">
+                                        <span class="kt-table-col">
+                                            <span class="kt-table-col-label">Username</span>
+                                            <span class="kt-table-col-sort"></span>
+                                        </span>
+                                    </th>
+                                    <th scope="col" class="min-w-[180px]" data-kt-datatable-column="email">
+                                        <span class="kt-table-col">
+                                            <span class="kt-table-col-label">Email</span>
+                                            <span class="kt-table-col-sort"></span>
+                                        </span>
+                                    </th>
+                                    <th scope="col" class="w-28" data-kt-datatable-column="role">
+                                        <span class="kt-table-col">
+                                            <span class="kt-table-col-label">Role</span>
+                                            <span class="kt-table-col-sort"></span>
+                                        </span>
+                                    </th>
+                                    <th scope="col" class="w-36" data-kt-datatable-column="status">
+                                        <span class="kt-table-col">
+                                            <span class="kt-table-col-label">Status</span>
+                                            <span class="kt-table-col-sort"></span>
+                                        </span>
+                                    </th>
+                                    <th scope="col" class="w-40" data-kt-datatable-column="registeredAt">
+                                        <span class="kt-table-col">
+                                            <span class="kt-table-col-label">Tanggal Daftar</span>
+                                            <span class="kt-table-col-sort"></span>
+                                        </span>
+                                    </th>
+                                    <th scope="col" class="w-28" data-kt-datatable-column="actions"
+                                        data-kt-datatable-column-sort="false">
+                                        <span class="kt-table-col">
+                                            <span class="kt-table-col-label">Aksi</span>
+                                        </span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($users as $user)
+                                    <tr wire:key="user-row-{{ $user->id }}">
+                                        <td>{{ $user->name }}</td>
+                                        <td>{{ $user->username }}</td>
+                                        <td>{{ $user->email }}</td>
+                                        <td>
+                                            <span class="kt-badge kt-badge-sm kt-badge-outline">{{ $user->role->label() }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="kt-badge kt-badge-sm {{ $user->approval_status->badgeClass() }}">
+                                                {{ $user->approval_status->label() }}
+                                            </span>
+                                        </td>
+                                        <td>{{ $user->created_at->format('d M Y, H:i') }}</td>
+                                        <td class="text-end">
+                                            @if ($user->isPendingApproval())
+                                                <span class="inline-flex gap-2">
+                                                    <button type="button" class="kt-btn kt-btn-sm kt-btn-primary"
+                                                        wire:click="approve({{ $user->id }})"
+                                                        wire:confirm="Setujui akun {{ $user->name }}?"
+                                                        aria-label="Setujui">
+                                                        <i class="ki-filled ki-check text-xs"></i>
+                                                    </button>
+                                                    <button type="button"
+                                                        class="kt-btn kt-btn-sm kt-btn-outline text-destructive"
+                                                        wire:click="reject({{ $user->id }})"
+                                                        wire:confirm="Tolak akun {{ $user->name }}?"
+                                                        aria-label="Tolak">
+                                                        <i class="ki-filled ki-cross text-xs"></i>
+                                                    </button>
+                                                </span>
+                                            @else
+                                                <span class="text-xs text-muted-foreground">—</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="text-center text-sm text-secondary-foreground py-10">
+                                            Tidak ada akun yang cocok dengan filter ini.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
-
-                    @if ($users->hasPages())
-                        <div class="border-t border-border p-5">
-                            {{ $users->links() }}
+                    <div class="kt-datatable-toolbar">
+                        <div class="kt-datatable-length">
+                            Show<select class="kt-select kt-select-sm w-16" name="perpage"
+                                data-kt-datatable-size="true"></select>per page
                         </div>
-                    @endif
-                @endif
+                        <div class="kt-datatable-info">
+                            <span data-kt-datatable-info="true"></span>
+                            <div class="kt-datatable-pagination" data-kt-datatable-pagination="true"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
+
+        
+          
     </div>
 </div>

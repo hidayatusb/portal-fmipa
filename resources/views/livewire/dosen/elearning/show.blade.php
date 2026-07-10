@@ -69,25 +69,26 @@
                       <li>
                         <button  class="kt-dropdown-menu-link" data-kt-dropdown-dismiss="true" wire:click="toggleEditForm">
                             <i class="ki-filled ki-notepad-edit"></i>
-                            Edit Kelas
+                           <span class="kt-menu-title">Edit Kelas</span>
                         </button>
                       </li>
                       <li>
                         <a  href="{{ route('dosen.elearning.materials.create', $course) }}" class="kt-dropdown-menu-link" data-kt-dropdown-dismiss="true" wire:click="toggleEditForm">
                             <i class="ki-filled ki-book"></i>
-                            Tambah Materi
+                          
+                            <span class="kt-menu-title">Tambah Materi</span>
                         </a>
                       </li>
                       <li>
                         <a  href="{{ route('dosen.elearning.assignments.create', $course) }}" class="kt-dropdown-menu-link" data-kt-dropdown-dismiss="true" wire:click="toggleEditForm">
                             <i class="ki-filled ki-clipboard"></i>
-                            Tambah Tugas
+                            <span class="kt-menu-title">Tambah Tugas</span>
                         </a>
                       </li>
                       <li>
                         <a href="{{ route('dosen.elearning.grades.settings', $course) }}" class="kt-dropdown-menu-link" data-kt-dropdown-dismiss="true" wire:click="toggleEditForm">
                             <i class="ki-filled ki-setting-2"></i>
-                            Pengaturan Nilai
+                            <span class="kt-menu-title">Pengaturan Nilai</span>
                         </a>
                       </li>
                       <li>
