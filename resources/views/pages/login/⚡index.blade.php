@@ -116,5 +116,9 @@ new #[Layout('layouts::login')] class extends Component {
         </button>
     </form>
 
-    
+    <div class="px-10 pb-8 text-center">
+        <a href="{{ route('privacy') }}" class="text-xs text-secondary-foreground hover:text-primary" wire:navigate>
+            Kebijakan Privasi
+        </a>
+    </div>
 </div>
