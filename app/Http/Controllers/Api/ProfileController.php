@@ -66,4 +66,19 @@ class ProfileController extends ApiController
 
         return $this->success(UserResource::make($user->fresh()), 'Profil berhasil diperbarui.');
     }
+
+    public function destroy(Request $request): JsonResponse
+    {
+        $request->validate([
+            'password' => ['required', 'current_password'],
+        ], [
+            'password.required' => 'Password wajib diisi untuk menghapus akun.',
+            'password.current_password' => 'Password tidak sesuai.',
+        ]);
+
+        $user = $request->user();
+        $user->deleteAccount();
+
+        return $this->success(null, 'Akun berhasil dihapus.');
+    }
 }

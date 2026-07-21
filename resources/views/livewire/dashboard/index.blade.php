@@ -152,8 +152,7 @@
                 </div>
             </div>
             <!-- end: grid -->
-
-            @include('livewire.dashboard.partials.announcements', ['announcements' => $announcements])
+            
         </div>
     </div>
     <!-- End of Container -->

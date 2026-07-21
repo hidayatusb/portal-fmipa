@@ -33,6 +33,8 @@ class Edit extends Component
 
     public bool $removeProfilePicture = false;
 
+    public string $deleteAccountPassword = '';
+
     public function mount(): void
     {
         $user = Auth::user();
@@ -45,6 +47,33 @@ class Edit extends Component
             ['label' => 'Home', 'url' => route('dashboard.index')],
             ['label' => 'Profil'],
         ]);
+    }
+
+    public function resetDeleteAccountForm(): void
+    {
+        $this->deleteAccountPassword = '';
+        $this->resetValidation('deleteAccountPassword');
+    }
+
+    public function deleteAccount(): void
+    {
+        $this->validate([
+            'deleteAccountPassword' => ['required', 'current_password'],
+        ], [
+            'deleteAccountPassword.required' => 'Password wajib diisi untuk menghapus akun.',
+            'deleteAccountPassword.current_password' => 'Password tidak sesuai.',
+        ]);
+
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $user->deleteAccount();
+
+        Auth::logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+
+        $this->redirect(route('login'), navigate: true);
     }
 
     public function removePhoto(): void

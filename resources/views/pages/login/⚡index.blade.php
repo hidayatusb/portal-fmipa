@@ -53,10 +53,10 @@ new #[Layout('layouts::login')] class extends Component {
     <form wire:submit.prevent="login" class="kt-card-content flex flex-col gap-5 p-10" id="sign_in_form">
         <div class="text-center mb-2.5">
             <div class="mb-4 flex justify-center">
-                <img class="min-h-[28px] max-w-none dark:hidden" src="{{ asset('assets/media/app/mini-logo.svg') }}"
+                <img style="height: 80px;" class="max-h-[28px] max-w-none dark:hidden rounded-xl" src="{{ asset('assets/media/app/portal.png') }}"
                     alt="Portal FMIPA" />
                 <img class="hidden min-h-[28px] max-w-none dark:inline-block"
-                    src="{{ asset('assets/media/app/mini-logo-gray-dark.svg') }}" alt="Portal FMIPA" />
+                    src="{{ asset('assets/media/app/portal.png') }}" alt="Portal FMIPA" />
             </div>
             <h3 class="text-lg font-medium text-mono leading-none mb-2.5">
                 Masuk

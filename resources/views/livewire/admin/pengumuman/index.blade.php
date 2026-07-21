@@ -3,16 +3,13 @@
         <div class="flex flex-wrap items-center justify-between gap-5 pb-7.5 lg:items-end">
             <div class="flex flex-col justify-center gap-2">
                 <h1 class="text-xl font-medium leading-none text-mono">
-                    Kelola Pengumuman
+                    Pengumuman
                 </h1>
                 <p class="text-sm font-normal text-secondary-foreground">
                     Kelola pengumuman dengan teks dan gambar untuk seluruh pengguna portal
                 </p>
             </div>
             <div class="flex items-center gap-2.5">
-                <a href="{{ route('pengumuman.index') }}" class="kt-btn kt-btn-outline" wire:navigate>
-                    Lihat Publik
-                </a>
                 <a href="{{ route('admin.pengumuman.create') }}" class="kt-btn kt-btn-primary" wire:navigate>
                     <i class="ki-filled ki-plus-squared"></i>
                     Tambah Pengumuman

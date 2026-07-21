@@ -3,7 +3,9 @@
         <div class="flex items-center gap-2">
             <h3 class="text-sm font-semibold text-mono">Notifikasi</h3>
             @if ($unreadCount > 0)
-                <span class="kt-badge kt-badge-sm kt-badge-primary kt-badge-outline">{{ $unreadCount }} baru</span>
+                <span class="kt-badge kt-badge-xs kt-badge-primary rounded-full border border-background">
+                    {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                </span>
             @endif
         </div>
         <div class="flex items-center gap-1">
@@ -30,48 +32,40 @@
                     @php
                         $data = $notification->data;
                         $isUnread = $notification->unread();
+                        $url = \App\Support\NotificationLink::resolve($notification);
                     @endphp
-                    <div class="px-5 py-4 transition-colors {{ $isUnread ? 'bg-primary/5' : '' }}"
-                        wire:key="notification-{{ $notification->id }}">
-                        <div class="flex gap-3">
-                            <span
-                                class="inline-flex size-10 shrink-0 items-center justify-center rounded-full {{ $isUnread ? 'bg-primary/15 text-primary' : 'bg-accent text-muted-foreground' }}">
-                                <i class="ki-filled ki-clipboard text-sm"></i>
-                            </span>
+                    <button type="button"
+                        class="flex w-full px-5 py-4 text-start transition-colors hover:bg-accent/50 {{ $isUnread ? 'bg-primary/5' : '' }} {{ $url ? 'cursor-pointer' : 'cursor-default' }}"
+                        wire:key="notification-{{ $notification->id }}"
+                        wire:click="open('{{ $notification->id }}')"
+                        @if ($url) data-kt-drawer-dismiss="true" @endif>
+                        <div class="flex w-full gap-3">
+                            <div class="kt-avatar size-10 shrink-0">
+                                <div
+                                    class="kt-avatar-fallback {{ $isUnread ? 'border-primary/20 bg-primary/15 text-primary' : 'bg-accent text-muted-foreground' }}">
+                                    <i class="ki-filled ki-clipboard text-sm"></i>
+                                </div>
+                               
+                            </div>
                             <div class="min-w-0 flex-1">
                                 <div class="mb-1 flex flex-wrap items-center gap-2">
                                     <p class="text-sm font-semibold text-mono">{{ $data['title'] ?? 'Notifikasi' }}</p>
                                     @if ($data['is_late'] ?? false)
                                         <span class="kt-badge kt-badge-xs kt-badge-warning kt-badge-outline">Terlambat</span>
                                     @endif
-                                    @if ($isUnread)
-                                        <span class="size-2 rounded-full bg-primary"></span>
-                                    @endif
                                 </div>
                                 <p class="text-sm leading-relaxed text-secondary-foreground">
                                     {{ $data['message'] ?? '' }}
                                 </p>
-                                <p class="mt-1 text-xs text-muted-foreground">
-                                    {{ $notification->created_at->locale('id')->diffForHumans() }}
-                                </p>
-                                <div class="mt-3 flex flex-wrap items-center gap-2">
-                                    @if (! empty($data['url']))
-                                        <a href="{{ $data['url'] }}" target="_blank" rel="noopener"
-                                            class="kt-btn kt-btn-xs kt-btn-primary"
-                                            wire:click="markAsRead('{{ $notification->id }}')">
-                                            Lihat Jawaban
-                                        </a>
-                                    @endif
-                                    @if ($isUnread)
-                                        <button type="button" class="kt-btn kt-btn-xs kt-btn-outline"
-                                            wire:click="markAsRead('{{ $notification->id }}')">
-                                            Tandai dibaca
-                                        </button>
-                                    @endif
+                                <div class="mt-1 flex items-center justify-between gap-2">
+                                    <p class="text-xs text-muted-foreground">
+                                        {{ $notification->created_at->locale('id')->diffForHumans() }}
+                                    </p>
+                                   
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </button>
                 @endforeach
             </div>
         @endif

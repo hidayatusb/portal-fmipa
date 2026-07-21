@@ -6,6 +6,7 @@ use App\Enums\UserApprovalStatus;
 use App\Enums\UserRole;
 use App\Livewire\Concerns\SetsBreadcrumbs;
 use App\Models\Announcement;
+use App\Models\AssignmentSubmission;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
@@ -26,15 +27,14 @@ class Index extends Component
     public function render(): View
     {
         $user = Auth::user();
-        $announcements = Announcement::query()
-            ->published()
-            ->latest('published_at')
-            ->limit(5)
-            ->get();
 
         if ($user?->isAdmin()) {
             return view('livewire.dashboard.admin', [
-                'announcements' => $announcements,
+                'announcements' => Announcement::query()
+                    ->published()
+                    ->latest('published_at')
+                    ->limit(5)
+                    ->get(),
                 'stats' => [
                     'pending' => User::query()
                         ->whereRoleIn([UserRole::Dosen, UserRole::Mahasiswa])
@@ -61,25 +61,30 @@ class Index extends Component
                 ->limit(5)
                 ->get();
 
-            $allCourses = Course::query()
+            $courseIds = Course::query()
                 ->where('user_id', $user->id)
-                ->withCount(['materials', 'students'])
-                ->get();
+                ->pluck('id');
+
+            $ungradedSubmissions = AssignmentSubmission::query()
+                ->whereNull('score', 'and', false)
+                ->whereHas(
+                    'assignment',
+                    fn ($query) => $query->whereIn('course_id', $courseIds->all(), 'and', false),
+                    '>=',
+                    1,
+                )
+                ->count('*');
 
             return view('livewire.dashboard.dosen', [
                 'user' => $user,
                 'courses' => $courses,
-                'announcements' => $announcements,
                 'stats' => [
-                    'courses' => $allCourses->count(),
-                    'students' => $allCourses->sum('students_count'),
-                    'materials' => $allCourses->sum('materials_count'),
+                    'courses' => $courseIds->count(),
+                    'ungraded' => $ungradedSubmissions,
                 ],
             ]);
         }
 
-        return view('livewire.dashboard.index', [
-            'announcements' => $announcements,
-        ]);
+        return view('livewire.dashboard.index');
     }
 }

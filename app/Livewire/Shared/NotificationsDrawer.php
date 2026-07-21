@@ -3,6 +3,7 @@
 namespace App\Livewire\Shared;
 
 use App\Models\User;
+use App\Support\NotificationLink;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +16,33 @@ class NotificationsDrawer extends Component
     public function refreshNotifications(): void
     {
         //
+    }
+
+    public function open(string $notificationId): void
+    {
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        if (! $user) {
+            return;
+        }
+
+        $notification = $user->notifications()->whereKey($notificationId)->first();
+
+        if (! $notification) {
+            return;
+        }
+
+        if ($notification->unread()) {
+            $notification->markAsRead();
+            $this->dispatch('notifications-updated');
+        }
+
+        $url = NotificationLink::resolve($notification);
+
+        if ($url) {
+            $this->redirect($url, navigate: true);
+        }
     }
 
     public function markAsRead(string $notificationId): void

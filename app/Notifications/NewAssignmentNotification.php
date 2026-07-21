@@ -41,6 +41,10 @@ class NewAssignmentNotification extends Notification
             'course_id' => $course->id,
             'assignment_id' => $this->assignment->id,
             'due_date' => $this->assignment->due_date->toIso8601String(),
+            'url' => route('mahasiswa.elearning.assignments.show', [
+                'course' => $course,
+                'assignment' => $this->assignment,
+            ]),
         ];
     }
 }

@@ -19,23 +19,17 @@
     </div>
 
     <div class="kt-container-fixed">
-        <div class="mb-7.5 grid gap-5 sm:grid-cols-3">
+        <div class="mb-7.5 grid gap-5 sm:grid-cols-2">
             <div class="kt-card">
                 <div class="kt-card-content flex flex-col gap-1 p-5">
-                    <span class="text-2sm text-secondary-foreground">Mata Kuliah</span>
+                    <span class="text-2sm text-secondary-foreground">Total Kelas</span>
                     <span class="text-2xl font-semibold text-mono">{{ $stats['courses'] }}</span>
                 </div>
             </div>
             <div class="kt-card">
                 <div class="kt-card-content flex flex-col gap-1 p-5">
-                    <span class="text-2sm text-secondary-foreground">Mahasiswa</span>
-                    <span class="text-2xl font-semibold text-mono">{{ $stats['students'] }}</span>
-                </div>
-            </div>
-            <div class="kt-card">
-                <div class="kt-card-content flex flex-col gap-1 p-5">
-                    <span class="text-2sm text-secondary-foreground">Materi</span>
-                    <span class="text-2xl font-semibold text-mono">{{ $stats['materials'] }}</span>
+                    <span class="text-2sm text-secondary-foreground">Tugas Belum Dinilai</span>
+                    <span class="text-2xl font-semibold text-mono">{{ $stats['ungraded'] }}</span>
                 </div>
             </div>
         </div>
@@ -77,7 +71,5 @@
                 @endif
             </div>
         </div>
-
-        @include('livewire.dashboard.partials.announcements', ['announcements' => $announcements])
     </div>
 </div>

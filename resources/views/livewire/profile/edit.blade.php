@@ -144,5 +144,80 @@
                 </div>
             </div>
         </form>
+
+        <div class="kt-card mt-5 border-destructive/30">
+            <div class="kt-card-header">
+                <h3 class="kt-card-title text-destructive">Zona Berbahaya</h3>
+            </div>
+            <div class="kt-card-content flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <p class="text-sm font-medium text-mono">Hapus Akun</p>
+                    <p class="mt-1 text-sm text-secondary-foreground">
+                        Menghapus akun bersifat permanen. Semua data terkait
+                        @if ($user->isDosen())
+                            (kelas, materi, tugas, dan nilai)
+                        @elseif ($user->isMahasiswa())
+                            (pendaftaran kelas dan pengumpulan tugas)
+                        @endif
+                        akan ikut terhapus.
+                    </p>
+                </div>
+                <button type="button" class="kt-btn kt-btn-destructive shrink-0"
+                    data-kt-modal-toggle="#delete_account_modal" wire:click="resetDeleteAccountForm">
+                    <i class="ki-filled ki-trash"></i>
+                    Hapus Akun
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="kt-modal kt-modal-center" data-kt-modal="true" id="delete_account_modal" wire:ignore.self>
+        <div class="kt-modal-content max-w-[400px] w-full">
+            <div class="kt-modal-header">
+                <h3 class="kt-modal-title">Hapus Akun</h3>
+                <button type="button" class="kt-modal-close" aria-label="Close modal"
+                    data-kt-modal-dismiss="#delete_account_modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="lucide lucide-x" aria-hidden="true">
+                        <path d="M18 6 6 18"></path>
+                        <path d="m6 6 12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <form wire:submit.prevent="deleteAccount">
+                <div class="kt-modal-body flex flex-col gap-4">
+                    <div class="kt-alert kt-alert-warning flex items-start gap-2">
+                        <i class="ki-filled ki-information-2 mt-0.5"></i>
+                        <div class="text-sm">
+                            Anda akan menghapus akun <span class="font-semibold text-mono">{{ $user->username }}</span>.
+                            Tindakan ini tidak dapat dibatalkan.
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-medium text-mono" for="deleteAccountPassword">
+                            Masukkan password Anda untuk konfirmasi
+                        </label>
+                        <input id="deleteAccountPassword" type="password" class="kt-input"
+                            wire:model="deleteAccountPassword" autocomplete="current-password"
+                            placeholder="Password akun Anda" />
+                        @error('deleteAccountPassword')
+                            <span class="text-xs text-destructive">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="kt-modal-footer gap-2.5">
+                    <button type="button" class="kt-btn kt-btn-outline" data-kt-modal-dismiss="#delete_account_modal"
+                        wire:click="resetDeleteAccountForm">
+                        Batal
+                    </button>
+                    <button type="submit" class="kt-btn kt-btn-destructive" wire:loading.attr="disabled"
+                        wire:target="deleteAccount">
+                        <span wire:loading.remove wire:target="deleteAccount">Hapus Akun</span>
+                        <span wire:loading wire:target="deleteAccount">Menghapus...</span>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>

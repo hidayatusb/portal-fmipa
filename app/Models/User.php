@@ -217,4 +217,28 @@ class User extends Authenticatable
     {
         return strtoupper(substr($this->name, 0, 1));
     }
+
+    /**
+     * Hapus akun beserta data terkait (kelas, pengumpulan, token, notifikasi, foto).
+     */
+    public function deleteAccount(): void
+    {
+        $this->loadMissing(['courses', 'assignmentSubmissions']);
+
+        foreach ($this->courses as $course) {
+            $course->delete();
+        }
+
+        $this->assignmentSubmissions->each->delete();
+
+        if ($this->profile_picture) {
+            Storage::disk('public')->delete($this->profile_picture);
+        }
+
+        $this->notifications()->delete();
+        $this->tokens()->delete();
+        $this->deviceTokens()->delete();
+
+        $this->delete();
+    }
 }

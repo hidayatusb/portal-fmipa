@@ -174,6 +174,18 @@ Update profil. **Auth required**
 | profile_picture | file | Foto profil (max 2MB) |
 | remove_profile_picture | boolean | Hapus foto profil |
 
+### DELETE `/profile`
+
+Hapus akun yang sedang login. **Auth required · permanen**
+
+**Body (JSON)**
+
+| Field | Tipe | Wajib | Keterangan |
+|-------|------|-------|------------|
+| password | string | ya | Password akun untuk konfirmasi |
+
+Setelah berhasil, semua token Sanctum user ikut dihapus. Data terkait (kelas milik dosen, pengumpulan mahasiswa, dll.) juga dihapus.
+
 ---
 
 ## Notifikasi (Semua Role)

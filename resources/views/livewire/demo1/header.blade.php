@@ -18,7 +18,7 @@
         </div>
         <!-- End of Mobile Logo -->
 
-        <div class="flex min-w-0 flex-1 items-center">
+        <div class="hidden min-w-0 flex-1 items-center lg:flex">
             <x-header-breadcrumb-nav :items="$breadcrumbs ?? []" class="mb-0 min-w-0" />
         </div>
 

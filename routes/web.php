@@ -24,7 +24,6 @@ use App\Livewire\Dosen\Elearning\ShowAssignment as DosenShowAssignment;
 use App\Livewire\Mahasiswa\Elearning\Index as MahasiswaElearningIndex;
 use App\Livewire\Mahasiswa\Elearning\Show as MahasiswaElearningShow;
 use App\Livewire\Mahasiswa\Elearning\ShowAssignment as MahasiswaShowAssignment;
-use App\Livewire\Pengumuman\Index as PengumumanIndex;
 use App\Livewire\Profile\Edit as ProfileEdit;
 use Illuminate\Support\Facades\Route;
 
@@ -36,7 +35,6 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/dashboard', DashboardIndex::class)->name('dashboard.index');
     Route::get('/profil', ProfileEdit::class)->name('profile.edit');
     Route::get('/profil/foto', [ProfilePictureController::class, 'show'])->name('profile.picture');
-    Route::get('/pengumuman', PengumumanIndex::class)->name('pengumuman.index');
     Route::get('/pengumuman/{announcement}/gambar', [AnnouncementImageController::class, 'show'])
         ->name('announcements.image');
 

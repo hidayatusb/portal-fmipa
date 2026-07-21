@@ -38,6 +38,10 @@ class AssignmentGradedNotification extends Notification
             'submission_id' => $this->submission->id,
             'score' => $this->submission->score,
             'feedback' => $this->submission->feedback,
+            'url' => route('mahasiswa.elearning.assignments.show', [
+                'course' => $course,
+                'assignment' => $assignment,
+            ]),
         ];
     }
 
