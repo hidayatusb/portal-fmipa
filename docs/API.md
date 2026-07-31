@@ -85,6 +85,58 @@ Nomor `tugas N` / `jawaban N` mengikuti urutan tugas dalam kelas (berdasarkan de
 
 ## Auth (Semua Role)
 
+### POST `/auth/register`
+
+Daftar akun baru (dosen/mahasiswa). **Public**
+
+Akun dibuat dengan status `pending` dan **belum mendapat token**. User baru bisa login setelah disetujui admin.
+
+**Body (JSON)**
+
+| Field | Tipe | Wajib | Keterangan |
+|-------|------|-------|------------|
+| name | string | ya | Nama lengkap (min 3) |
+| username | string | ya | NIM / NIDN / NIP (unik) |
+| email | string | ya | Email (unik) |
+| password | string | ya | Min 8 karakter |
+| password_confirmation | string | ya | Harus sama dengan password |
+| role | string | ya | `dosen` atau `mahasiswa` |
+| device_name | string | tidak | Nama perangkat (disimpan opsional; token baru dibuat saat login) |
+
+**Contoh body**
+
+```json
+{
+  "name": "Ahmad Dayat",
+  "username": "dayat",
+  "email": "dayat@unsulbar.ac.id",
+  "password": "password123",
+  "password_confirmation": "password123",
+  "role": "mahasiswa",
+  "device_name": "flutter-lms-mobile"
+}
+```
+
+**Response `data` (201)**
+
+```json
+{
+  "user": {
+    "id": 10,
+    "name": "Ahmad Dayat",
+    "username": "dayat",
+    "email": "dayat@unsulbar.ac.id",
+    "role": "mahasiswa",
+    "role_label": "Mahasiswa",
+    "approval_status": "pending",
+    "approval_status_label": "Menunggu Review"
+  },
+  "requires_approval": true
+}
+```
+
+---
+
 ### POST `/auth/login`
 
 Login dan dapatkan token.
