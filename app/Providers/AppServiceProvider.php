@@ -42,7 +42,14 @@ class AppServiceProvider extends ServiceProvider
             $client = new GoogleClient;
             $client->setClientId($config['clientId']);
             $client->setClientSecret($config['clientSecret']);
-            $client->refreshToken($config['refreshToken']);
+            // Simpan refresh_token saja; jangan refreshToken() di sini.
+            // refreshToken() memanggil oauth2.googleapis.com saat disk dibuat,
+            // sehingga gangguan jaringan membuat seluruh halaman crash.
+            // Adapter akan refresh access token saat operasi file (lazy).
+            $client->setAccessToken([
+                'access_token' => '',
+                'refresh_token' => $config['refreshToken'],
+            ]);
             $client->setApplicationName(config('app.name'));
 
             $service = new GoogleDrive($client);

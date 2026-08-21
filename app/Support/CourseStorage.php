@@ -7,7 +7,9 @@ use App\Models\Course;
 use App\Models\User;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class CourseStorage
 {
@@ -69,12 +71,22 @@ class CourseStorage
 
         $disk = static::diskName();
 
-        if (Storage::disk($disk)->exists($path)) {
-            return true;
+        try {
+            if (Storage::disk($disk)->exists($path)) {
+                return true;
+            }
+        } catch (Throwable $e) {
+            static::logStorageFailure('exists', $disk, $path, $e);
         }
 
-        if ($disk !== 'public' && Storage::disk('public')->exists($path)) {
-            return true;
+        if ($disk !== 'public') {
+            try {
+                if (Storage::disk('public')->exists($path)) {
+                    return true;
+                }
+            } catch (Throwable $e) {
+                static::logStorageFailure('exists', 'public', $path, $e);
+            }
         }
 
         return false;
@@ -88,12 +100,22 @@ class CourseStorage
 
         $disk = static::diskName();
 
-        if (Storage::disk($disk)->exists($path)) {
-            Storage::disk($disk)->delete($path);
+        try {
+            if (Storage::disk($disk)->exists($path)) {
+                Storage::disk($disk)->delete($path);
+            }
+        } catch (Throwable $e) {
+            static::logStorageFailure('delete', $disk, $path, $e);
         }
 
-        if ($disk !== 'public' && Storage::disk('public')->exists($path)) {
-            Storage::disk('public')->delete($path);
+        if ($disk !== 'public') {
+            try {
+                if (Storage::disk('public')->exists($path)) {
+                    Storage::disk('public')->delete($path);
+                }
+            } catch (Throwable $e) {
+                static::logStorageFailure('delete', 'public', $path, $e);
+            }
         }
     }
 
@@ -108,23 +130,43 @@ class CourseStorage
 
         $disk = static::diskName();
 
-        if (Storage::disk($disk)->exists($path)) {
-            /** @var FilesystemAdapter $filesystem */
-            $filesystem = Storage::disk($disk);
+        try {
+            if (Storage::disk($disk)->exists($path)) {
+                /** @var FilesystemAdapter $filesystem */
+                $filesystem = Storage::disk($disk);
 
-            return $filesystem;
+                return $filesystem;
+            }
+        } catch (Throwable $e) {
+            static::logStorageFailure('diskForPath', $disk, $path, $e);
         }
 
-        if ($disk !== 'public' && Storage::disk('public')->exists($path)) {
-            /** @var FilesystemAdapter $filesystem */
-            $filesystem = Storage::disk('public');
+        if ($disk !== 'public') {
+            try {
+                if (Storage::disk('public')->exists($path)) {
+                    /** @var FilesystemAdapter $filesystem */
+                    $filesystem = Storage::disk('public');
 
-            return $filesystem;
+                    return $filesystem;
+                }
+            } catch (Throwable $e) {
+                static::logStorageFailure('diskForPath', 'public', $path, $e);
+            }
         }
 
         /** @var FilesystemAdapter $filesystem */
         $filesystem = Storage::disk($disk);
 
         return $filesystem;
+    }
+
+    protected static function logStorageFailure(string $operation, string $disk, string $path, Throwable $e): void
+    {
+        Log::warning('CourseStorage: gagal mengakses penyimpanan file.', [
+            'operation' => $operation,
+            'disk' => $disk,
+            'path' => $path,
+            'message' => $e->getMessage(),
+        ]);
     }
 }

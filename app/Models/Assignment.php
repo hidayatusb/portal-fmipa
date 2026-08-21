@@ -203,8 +203,8 @@ class Assignment extends Model
 
     public function hasAttachment(): bool
     {
-        return filled($this->attachment_path)
-            && CourseStorage::exists($this->attachment_path);
+        // Cukup cek path di DB — jangan hit Google Drive di setiap render halaman.
+        return filled($this->attachment_path);
     }
 
     public function isImageAttachment(): bool

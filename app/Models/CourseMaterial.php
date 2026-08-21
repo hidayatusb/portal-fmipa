@@ -52,8 +52,8 @@ class CourseMaterial extends Model
 
     public function hasFile(): bool
     {
-        return filled($this->file_path)
-            && CourseStorage::exists($this->file_path);
+        // Cukup cek path di DB — jangan hit Google Drive di setiap render halaman.
+        return filled($this->file_path);
     }
 
     public function isImageFile(): bool
