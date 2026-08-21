@@ -32,6 +32,7 @@ new #[Layout('layouts::login')] class extends Component {
                 Auth::logout();
                 session()->flash('error', $message);
 
+
                 return back();
             }
 
@@ -48,6 +49,55 @@ new #[Layout('layouts::login')] class extends Component {
 
 <div>
 
+
+    {{-- if session has error, show the error message --}}
+    @if (session('error'))
+
+        <div class="kt-alert kt-alert-light kt-alert-destructive" id="alert_4">
+            <div class="kt-alert-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-info"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 16v-4"></path>
+                <path d="M12 8h.01"></path>
+              </svg>
+            </div>
+            <div class="kt-alert-title">{{ session('error') }}</div>
+            <div class="kt-alert-toolbar">
+              <div class="kt-alert-actions">
+                <button class="kt-alert-close" data-kt-dismiss="#alert_4">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="lucide lucide-x"
+                    aria-hidden="true"
+                  >
+                    <path d="M18 6 6 18"></path>
+                    <path d="m6 6 12 12"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+    @endif
 
 
     <form wire:submit.prevent="login" class="kt-card-content flex flex-col gap-5 p-10" id="sign_in_form">

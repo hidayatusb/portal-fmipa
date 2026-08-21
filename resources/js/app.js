@@ -1,4 +1,6 @@
 import './bootstrap';
+
+import '@keenthemes/ktui';
 import { registerAssignmentCountdown } from './assignment-countdown';
 
 registerAssignmentCountdown();

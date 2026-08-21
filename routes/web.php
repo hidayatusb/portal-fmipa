@@ -93,6 +93,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
     });
 });
 
+Route::livewire('/pengumuman-placement-test', 'pages::placement-test.index')->name('placement-test.index');
 Route::livewire('/login', 'pages::login.index')->name('login');
 Route::livewire('/register', 'pages::register.index')->name('register');
 Route::livewire('/privacy-policy', 'pages::privacy.index')->name('privacy');
