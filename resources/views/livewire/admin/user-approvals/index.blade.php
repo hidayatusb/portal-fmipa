@@ -79,7 +79,7 @@
                                             <span class="kt-table-col-sort"></span>
                                         </span>
                                     </th>
-                                    <th scope="col" class="w-28" data-kt-datatable-column="actions"
+                                    <th scope="col" class="w-40" data-kt-datatable-column="actions"
                                         data-kt-datatable-column-sort="false">
                                         <span class="kt-table-col">
                                             <span class="kt-table-col-label">Aksi</span>
@@ -103,25 +103,33 @@
                                         </td>
                                         <td>{{ $user->created_at->format('d M Y, H:i') }}</td>
                                         <td class="text-end">
-                                            @if ($user->isPendingApproval())
-                                                <span class="inline-flex gap-2">
+                                            <span class="inline-flex gap-2">
+                                                @if ($user->isPendingApproval())
                                                     <button type="button" class="kt-btn kt-btn-sm kt-btn-primary"
                                                         wire:click="approve({{ $user->id }})"
                                                         wire:confirm="Setujui akun {{ $user->name }}?"
-                                                        aria-label="Setujui">
+                                                        aria-label="Setujui"
+                                                        title="Setujui">
                                                         <i class="ki-filled ki-check text-xs"></i>
                                                     </button>
                                                     <button type="button"
                                                         class="kt-btn kt-btn-sm kt-btn-outline text-destructive"
                                                         wire:click="reject({{ $user->id }})"
                                                         wire:confirm="Tolak akun {{ $user->name }}?"
-                                                        aria-label="Tolak">
+                                                        aria-label="Tolak"
+                                                        title="Tolak">
                                                         <i class="ki-filled ki-cross text-xs"></i>
                                                     </button>
-                                                </span>
-                                            @else
-                                                <span class="text-xs text-muted-foreground">—</span>
-                                            @endif
+                                                @endif
+                                                <button type="button"
+                                                    class="kt-btn kt-btn-sm kt-btn-outline"
+                                                    wire:click="resetPassword({{ $user->id }})"
+                                                    wire:confirm="Reset password akun {{ $user->name }} ke username ({{ $user->username }})?"
+                                                    aria-label="Reset Password"
+                                                    title="Reset Password">
+                                                    <i class="ki-filled ki-key text-xs"></i>
+                                                </button>
+                                            </span>
                                         </td>
                                     </tr>
                                 @empty

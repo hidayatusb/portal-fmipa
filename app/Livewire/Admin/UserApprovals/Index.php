@@ -58,6 +58,20 @@ class Index extends Component
         session()->flash('success', "Akun {$user->name} ditolak.");
     }
 
+    public function resetPassword(int $userId): void
+    {
+        abort_unless(Auth::user()?->isAdmin(), 403);
+
+        $user = User::query()
+            ->whereKey($userId)
+            ->whereIn('role', [UserRole::Dosen, UserRole::Mahasiswa])
+            ->firstOrFail();
+
+        $user->update(['password' => $user->username]);
+
+        session()->flash('success', "Password akun {$user->name} berhasil direset ke username ({$user->username}).");
+    }
+
     public function render(): View
     {
         $status = $this->status === 'all' ? null : UserApprovalStatus::tryFrom($this->status);
