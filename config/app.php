@@ -56,6 +56,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | API Enabled
+    |--------------------------------------------------------------------------
+    |
+    | Set API_ENABLED=false di .env untuk menonaktifkan semua endpoint /api/*.
+    | Setelah diubah: php artisan config:clear
+    |
+    */
+
+    'api_enabled' => filter_var(env('API_ENABLED', true), FILTER_VALIDATE_BOOLEAN),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |
