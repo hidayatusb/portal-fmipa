@@ -129,6 +129,14 @@
                                                     title="Reset Password">
                                                     <i class="ki-filled ki-key text-xs"></i>
                                                 </button>
+                                                <button type="button"
+                                                    class="kt-btn kt-btn-sm kt-btn-outline text-destructive"
+                                                    wire:click="deleteUser({{ $user->id }})"
+                                                    wire:confirm="Hapus akun {{ $user->name }} secara permanen? Data terkait (kelas/pengumpulan) ikut terhapus."
+                                                    aria-label="Hapus"
+                                                    title="Hapus Akun">
+                                                    <i class="ki-filled ki-trash text-xs"></i>
+                                                </button>
                                             </span>
                                         </td>
                                     </tr>

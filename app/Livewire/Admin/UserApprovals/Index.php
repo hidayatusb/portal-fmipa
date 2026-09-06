@@ -72,6 +72,23 @@ class Index extends Component
         session()->flash('success', "Password akun {$user->name} berhasil direset ke username ({$user->username}).");
     }
 
+    public function deleteUser(int $userId): void
+    {
+        abort_unless(Auth::user()?->isAdmin(), 403);
+
+        $user = User::query()
+            ->whereKey($userId)
+            ->whereIn('role', [UserRole::Dosen, UserRole::Mahasiswa])
+            ->firstOrFail();
+
+        abort_if($user->id === Auth::id(), 403);
+
+        $name = $user->name;
+        $user->deleteAccount();
+
+        session()->flash('success', "Akun {$name} berhasil dihapus.");
+    }
+
     public function render(): View
     {
         $status = $this->status === 'all' ? null : UserApprovalStatus::tryFrom($this->status);
