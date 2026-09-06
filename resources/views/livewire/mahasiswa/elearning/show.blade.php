@@ -54,46 +54,50 @@
                     @else
                         <div class="divide-y divide-border">
                             @foreach ($course->materials as $material)
-                                <div class="flex items-start gap-3 p-4" wire:key="material-{{ $material->id }}">
-                                    <span class="kt-btn kt-btn-icon kt-btn-outline kt-btn-sm shrink-0">
-                                        @if ($material->type === 'video')
-                                            <i class="ki-filled ki-youtube"></i>
-                                        @elseif ($material->type === 'link')
-                                            <i class="ki-filled ki-exit-right-corner"></i>
-                                        @else
-                                            <i class="ki-filled ki-document"></i>
-                                        @endif
-                                    </span>
-                                    <div class="min-w-0 grow">
-                                        <h4 class="text-sm font-semibold text-mono">
-                                            @if ($material->hasFile())
-                                                @if ($material->isImageFile())
-                                                  
-
-                                                    <a href="{{ $material->fileUrl('mahasiswa') }}" target="_blank">{{ $material->title }}</a>
-                                            
+                                <div class="flex items-start justify-between gap-3 p-4" wire:key="material-{{ $material->id }}">
+                                    <div class="flex min-w-0 items-start gap-3">
+                                        <span class="kt-btn kt-btn-icon kt-btn-outline kt-btn-sm shrink-0">
+                                            @if ($material->type === 'video')
+                                                <i class="ki-filled ki-youtube"></i>
+                                            @elseif ($material->type === 'link')
+                                                <i class="ki-filled ki-exit-right-corner"></i>
+                                            @else
+                                                <i class="ki-filled ki-document"></i>
+                                            @endif
+                                        </span>
+                                        <div class="min-w-0">
+                                            <h4 class="text-sm font-semibold text-mono">
+                                                @if ($material->hasFile() && $material->isImageFile())
+                                                    <a href="{{ $material->fileUrl('mahasiswa') }}" target="_blank" rel="noopener noreferrer">
+                                                        {{ $material->title }}
+                                                    </a>
+                                                @elseif ($material->content && in_array($material->type, ['link', 'video'], true))
+                                                    <a href="{{ $material->content }}" target="_blank" rel="noopener noreferrer">
+                                                        {{ $material->title }}
+                                                    </a>
+                                                @else
+                                                    {{ $material->title }}
                                                 @endif
-                                                
-                                            @elseif ($material->content)
-                                              
-
-                                                <a href="{{ $material->content }}" target="_blank">{{ $material->title }}</a>
-                                            
-                                            @endif
-                                            
-                                           
-                                            
                                             </h4>
-                                        <p class="mt-1 text-xs text-secondary-foreground">
-                                            {{ ucfirst($material->type) }}
-                                            @if ($material->hasFile())
-                                                · {{ $material->file_name }}
-                                            @elseif ($material->content)
-                                                · {{ \Illuminate\Support\Str::limit($material->content, 80) }}
-                                            @endif
-                                        </p>
-                                       
+                                            <p class="mt-1 text-xs text-secondary-foreground">
+                                                {{ ucfirst($material->type) }}
+                                                @if ($material->hasFile())
+                                                    · {{ $material->file_name }}
+                                                @elseif ($material->content)
+                                                    · {{ \Illuminate\Support\Str::limit($material->content, 80) }}
+                                                @endif
+                                            </p>
+                                        </div>
                                     </div>
+                                    @if ($material->hasFile())
+                                        <div class="flex shrink-0 items-center gap-2">
+                                            <a href="{{ $material->fileDownloadUrl('mahasiswa') }}"
+                                                class="kt-btn kt-btn-sm kt-btn-outline">
+                                                <i class="ki-filled ki-cloud-download text-xs"></i>
+                                                Unduh
+                                            </a>
+                                        </div>
+                                    @endif
                                 </div>
                             @endforeach
                         </div>
