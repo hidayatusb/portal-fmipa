@@ -3,6 +3,7 @@
 
 <head>
     @include('layouts.partials.head')
+    <x-rich-text::styles />
     @livewireStyles
 </head>
 

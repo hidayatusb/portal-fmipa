@@ -21,9 +21,12 @@ use App\Livewire\Dosen\Elearning\GradeSettings as DosenGradeSettings;
 use App\Livewire\Dosen\Elearning\Index as DosenElearningIndex;
 use App\Livewire\Dosen\Elearning\Show as DosenElearningShow;
 use App\Livewire\Dosen\Elearning\ShowAssignment as DosenShowAssignment;
+use App\Livewire\Dosen\BimbinganSkripsi\Index as DosenBimbinganSkripsiIndex;
+use App\Livewire\Dosen\BimbinganSkripsi\Show as DosenBimbinganSkripsiShow;
 use App\Livewire\Mahasiswa\Elearning\Index as MahasiswaElearningIndex;
 use App\Livewire\Mahasiswa\Elearning\Show as MahasiswaElearningShow;
 use App\Livewire\Mahasiswa\Elearning\ShowAssignment as MahasiswaShowAssignment;
+use App\Livewire\Mahasiswa\BimbinganSkripsi\Index as MahasiswaBimbinganSkripsiIndex;
 use App\Livewire\Profile\Edit as ProfileEdit;
 use Illuminate\Support\Facades\Route;
 
@@ -72,6 +75,8 @@ Route::middleware(['auth', 'approved'])->group(function () {
             ->name('elearning.submissions.file.show');
         Route::get('/elearning/{course}/tugas/{assignment}/pengumpulan/{submission}/file/unduh', [DosenSubmissionFileController::class, 'download'])
             ->name('elearning.submissions.file.download');
+        Route::get('/bimbingan-skripsi', DosenBimbinganSkripsiIndex::class)->name('bimbingan-skripsi.index');
+        Route::get('/bimbingan-skripsi/{bimbingan}', DosenBimbinganSkripsiShow::class)->name('bimbingan-skripsi.show');
     });
 
     Route::middleware(['role:mahasiswa'])->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
@@ -90,6 +95,8 @@ Route::middleware(['auth', 'approved'])->group(function () {
             ->name('elearning.submissions.file.show');
         Route::get('/elearning/{course}/tugas/{assignment}/pengumpulan/{submission}/file/unduh', [MahasiswaSubmissionFileController::class, 'download'])
             ->name('elearning.submissions.file.download');
+
+        Route::get('/bimbingan-skripsi', MahasiswaBimbinganSkripsiIndex::class)->name('bimbingan-skripsi.index');
     });
 });
 

@@ -1,3 +1,4 @@
+import "./libs/trix";
 import './bootstrap';
 
 import '@keenthemes/ktui';

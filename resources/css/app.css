@@ -149,4 +149,77 @@
   .scrollbar-hidden::-webkit-scrollbar {
     display: none;
   }
+
+  .prose-logbook p {
+    margin-bottom: 0.5rem;
+  }
+
+  .prose-logbook ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .prose-logbook ol {
+    list-style: decimal;
+    padding-left: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .prose-logbook a {
+    color: var(--color-primary, #1b84ff);
+    text-decoration: underline;
+  }
+
+  .trix-livewire-wrapper trix-toolbar {
+    display: block;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+  }
+
+  .trix-livewire-wrapper trix-editor {
+    display: block;
+    min-height: 10rem;
+    padding: 0.75rem;
+  }
 }
+
+/* Restore list styles removed by Tailwind preflight (Trix editor + rendered content) */
+.trix-content ul,
+trix-editor ul,
+.prose-logbook ul {
+  list-style-type: disc !important;
+  list-style-position: outside !important;
+  margin-left: 0 !important;
+  padding-left: 1.5rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.trix-content ol,
+trix-editor ol,
+.prose-logbook ol {
+  list-style-type: decimal !important;
+  list-style-position: outside !important;
+  margin-left: 0 !important;
+  padding-left: 1.5rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.trix-content li,
+trix-editor li,
+.prose-logbook li {
+  display: list-item !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.trix-content ul ul,
+trix-editor ul ul,
+.prose-logbook ul ul {
+  list-style-type: circle !important;
+}
+
+.trix-content ul ul ul,
+trix-editor ul ul ul,
+.prose-logbook ul ul ul {
+  list-style-type: square !important;
+}
+
