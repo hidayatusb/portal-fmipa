@@ -22,6 +22,21 @@ class DaftarJudul extends Component
 
     public int $perPage = 25;
 
+    #[Url]
+    public string $sortField = 'created_at';
+
+    #[Url]
+    public string $sortDirection = 'desc';
+
+    /** @var list<string> */
+    protected array $sortable = [
+        'nim',
+        'nama_mahasiswa',
+        'judul',
+        'pembimbing1',
+        'created_at',
+    ];
+
     public function mount(): void
     {
         abort_unless(Auth::check(), 403);
@@ -30,6 +45,22 @@ class DaftarJudul extends Component
             ['label' => 'Home', 'url' => route('dashboard.index')],
             ['label' => 'Daftar Judul Skripsi'],
         ]);
+    }
+
+    public function sortBy(string $field): void
+    {
+        if (! in_array($field, $this->sortable, true)) {
+            return;
+        }
+
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+
+        $this->resetPage();
     }
 
     public function updatingSearch(): void
@@ -45,6 +76,10 @@ class DaftarJudul extends Component
     public function render(): View
     {
         $search = trim($this->search);
+        $sortField = in_array($this->sortField, $this->sortable, true)
+            ? $this->sortField
+            : 'created_at';
+        $sortDirection = $this->sortDirection === 'asc' ? 'asc' : 'desc';
 
         $items = JudulSkripsi::query()
             ->when($search !== '', function ($query) use ($search) {
@@ -56,7 +91,8 @@ class DaftarJudul extends Component
                         ->orWhere('pembimbing2', 'like', "%{$search}%");
                 });
             })
-            ->latest()
+            ->orderBy($sortField, $sortDirection)
+            ->orderBy('id', 'desc')
             ->paginate($this->perPage);
 
         return view('livewire.skripsi.daftar-judul', [

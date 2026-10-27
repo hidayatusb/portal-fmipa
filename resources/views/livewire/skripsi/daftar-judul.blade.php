@@ -29,24 +29,36 @@
                                             <span class="kt-table-col-label">No</span>
                                         </span>
                                     </th>
-                                    <th scope="col" class="min-w-[120px]">
+                                    <th scope="col" class="min-w-[120px] cursor-pointer select-none"
+                                        wire:click="sortBy('nim')"
+                                        @if ($sortField === 'nim') aria-sort="{{ $sortDirection }}" @endif>
                                         <span class="kt-table-col">
                                             <span class="kt-table-col-label">NIM</span>
+                                            <span class="kt-table-col-sort"></span>
                                         </span>
                                     </th>
-                                    <th scope="col" class="min-w-[160px]">
+                                    <th scope="col" class="min-w-[160px] cursor-pointer select-none"
+                                        wire:click="sortBy('nama_mahasiswa')"
+                                        @if ($sortField === 'nama_mahasiswa') aria-sort="{{ $sortDirection }}" @endif>
                                         <span class="kt-table-col">
                                             <span class="kt-table-col-label">Nama Mahasiswa</span>
+                                            <span class="kt-table-col-sort"></span>
                                         </span>
                                     </th>
-                                    <th scope="col" class="min-w-[280px]">
+                                    <th scope="col" class="min-w-[280px] cursor-pointer select-none"
+                                        wire:click="sortBy('judul')"
+                                        @if ($sortField === 'judul') aria-sort="{{ $sortDirection }}" @endif>
                                         <span class="kt-table-col">
                                             <span class="kt-table-col-label">Judul</span>
+                                            <span class="kt-table-col-sort"></span>
                                         </span>
                                     </th>
-                                    <th scope="col" class="min-w-[200px]">
+                                    <th scope="col" class="min-w-[200px] cursor-pointer select-none"
+                                        wire:click="sortBy('pembimbing1')"
+                                        @if ($sortField === 'pembimbing1') aria-sort="{{ $sortDirection }}" @endif>
                                         <span class="kt-table-col">
                                             <span class="kt-table-col-label">Pembimbing</span>
+                                            <span class="kt-table-col-sort"></span>
                                         </span>
                                     </th>
                                 </tr>
