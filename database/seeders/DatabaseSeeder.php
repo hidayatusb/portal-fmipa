@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             CourseSeeder::class,
             NotificationSeeder::class,
             PlacementTestResultSeeder::class,
+            JudulSkripsiSeeder::class,
         ]);
     }
 }
