@@ -19,80 +19,84 @@
                     <input type="text" placeholder="Cari NIM, nama, judul, pembimbing..."
                         class="kt-input sm:w-72" wire:model.live.debounce.300ms="search" />
                 </div>
-                <div id="kt_datatable_daftar_judul_skripsi" class="kt-card-table" data-kt-datatable="true"
-                    data-kt-datatable-page-size="10" data-kt-datatable-state-save="false"
-                    wire:key="daftar-judul-skripsi-{{ md5($search) }}">
-                    <div class="kt-table-wrapper kt-scrollable">
-                        <table class="kt-table" data-kt-datatable-table="true">
-                            <thead>
-                                <tr>
-                                    <th scope="col" class="w-16" data-kt-datatable-column="no"
-                                        data-kt-datatable-column-sort="false">
-                                        <span class="kt-table-col">
-                                            <span class="kt-table-col-label">No</span>
-                                        </span>
-                                    </th>
-                                    <th scope="col" class="min-w-[120px]" data-kt-datatable-column="nim">
-                                        <span class="kt-table-col">
-                                            <span class="kt-table-col-label">NIM</span>
-                                            <span class="kt-table-col-sort"></span>
-                                        </span>
-                                    </th>
-                                    <th scope="col" class="min-w-[160px]" data-kt-datatable-column="nama">
-                                        <span class="kt-table-col">
-                                            <span class="kt-table-col-label">Nama Mahasiswa</span>
-                                            <span class="kt-table-col-sort"></span>
-                                        </span>
-                                    </th>
-                                    <th scope="col" class="min-w-[280px]" data-kt-datatable-column="judul">
-                                        <span class="kt-table-col">
-                                            <span class="kt-table-col-label">Judul</span>
-                                            <span class="kt-table-col-sort"></span>
-                                        </span>
-                                    </th>
-                                    <th scope="col" class="min-w-[200px]" data-kt-datatable-column="pembimbing">
-                                        <span class="kt-table-col">
-                                            <span class="kt-table-col-label">Pembimbing</span>
-                                            <span class="kt-table-col-sort"></span>
-                                        </span>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($items as $index => $item)
-                                    <tr wire:key="judul-skripsi-{{ $item->id }}">
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>{{ $item->mahasiswa?->username ?? '-' }}</td>
-                                        <td>{{ $item->mahasiswa?->name ?? '-' }}</td>
-                                        <td>{{ $item->judul ?: '-' }}</td>
-                                        <td>
-                                            <div class="flex flex-col gap-0.5">
-                                                <span>1. {{ $item->pembimbing1?->name ?? '-' }}</span>
-                                                <span>2. {{ $item->pembimbing2?->name ?? '-' }}</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
+
+                @if ($items->isEmpty())
+                    <div class="flex flex-col items-center gap-3 p-10 text-center">
+                        <i class="ki-filled ki-questionnaire-tablet text-4xl text-muted-foreground"></i>
+                        <p class="text-sm text-secondary-foreground">
+                            {{ $search !== '' ? 'Tidak ada data yang cocok dengan pencarian.' : 'Belum ada data judul skripsi.' }}
+                        </p>
+                    </div>
+                @else
+                    <div id="kt_datatable_daftar_judul_skripsi" class="kt-card-table" data-kt-datatable="true"
+                        data-kt-datatable-page-size="10" data-kt-datatable-state-save="false"
+                        wire:key="daftar-judul-skripsi-{{ md5($search) }}">
+                        <div class="kt-table-wrapper kt-scrollable">
+                            <table class="kt-table" data-kt-datatable-table="true">
+                                <thead>
                                     <tr>
-                                        <td colspan="5" class="py-10 text-center text-sm text-secondary-foreground">
-                                            Belum ada data judul skripsi.
-                                        </td>
+                                        <th scope="col" class="w-16" data-kt-datatable-column="no"
+                                            data-kt-datatable-column-sort="false">
+                                            <span class="kt-table-col">
+                                                <span class="kt-table-col-label">No</span>
+                                            </span>
+                                        </th>
+                                        <th scope="col" class="min-w-[120px]" data-kt-datatable-column="nim">
+                                            <span class="kt-table-col">
+                                                <span class="kt-table-col-label">NIM</span>
+                                                <span class="kt-table-col-sort"></span>
+                                            </span>
+                                        </th>
+                                        <th scope="col" class="min-w-[160px]" data-kt-datatable-column="nama">
+                                            <span class="kt-table-col">
+                                                <span class="kt-table-col-label">Nama Mahasiswa</span>
+                                                <span class="kt-table-col-sort"></span>
+                                            </span>
+                                        </th>
+                                        <th scope="col" class="min-w-[280px]" data-kt-datatable-column="judul">
+                                            <span class="kt-table-col">
+                                                <span class="kt-table-col-label">Judul</span>
+                                                <span class="kt-table-col-sort"></span>
+                                            </span>
+                                        </th>
+                                        <th scope="col" class="min-w-[200px]" data-kt-datatable-column="pembimbing">
+                                            <span class="kt-table-col">
+                                                <span class="kt-table-col-label">Pembimbing</span>
+                                                <span class="kt-table-col-sort"></span>
+                                            </span>
+                                        </th>
                                     </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="kt-datatable-toolbar">
-                        <div class="kt-datatable-length">
-                            Show<select class="kt-select kt-select-sm w-16" name="perpage"
-                                data-kt-datatable-size="true"></select>per page
+                                </thead>
+                                <tbody>
+                                    @foreach ($items as $index => $item)
+                                        <tr wire:key="judul-skripsi-{{ $item->id }}">
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $item->nim }}</td>
+                                            <td>{{ $item->nama_mahasiswa }}</td>
+                                            <td>{{ $item->judul }}</td>
+                                            <td>
+                                                <div class="flex flex-col gap-0.5">
+                                                    <span>1. {{ $item->pembimbing1 }}</span>
+                                                    <span>2. {{ $item->pembimbing2 ?: '-' }}</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="kt-datatable-info">
-                            <span data-kt-datatable-info="true"></span>
-                            <div class="kt-datatable-pagination" data-kt-datatable-pagination="true"></div>
+                        <div class="kt-datatable-toolbar">
+                            <div class="kt-datatable-length">
+                                Show<select class="kt-select kt-select-sm w-16" name="perpage"
+                                    data-kt-datatable-size="true"></select>per page
+                            </div>
+                            <div class="kt-datatable-info">
+                                <span data-kt-datatable-info="true"></span>
+                                <div class="kt-datatable-pagination" data-kt-datatable-pagination="true"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
             </div>
         </div>
     </div>

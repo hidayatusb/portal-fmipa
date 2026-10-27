@@ -3,7 +3,7 @@
 namespace App\Livewire\Skripsi;
 
 use App\Livewire\Concerns\SetsBreadcrumbs;
-use App\Models\BimbinganSkripsi;
+use App\Models\JudulSkripsi;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
@@ -30,21 +30,14 @@ class DaftarJudul extends Component
     {
         $search = trim($this->search);
 
-        $items = BimbinganSkripsi::query()
-            ->with(['mahasiswa', 'pembimbing1', 'pembimbing2'])
+        $items = JudulSkripsi::query()
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($inner) use ($search) {
-                    $inner->where('judul', 'like', "%{$search}%")
-                        ->orWhereHas('mahasiswa', function ($mahasiswa) use ($search) {
-                            $mahasiswa->where('name', 'like', "%{$search}%")
-                                ->orWhere('username', 'like', "%{$search}%");
-                        })
-                        ->orWhereHas('pembimbing1', function ($dosen) use ($search) {
-                            $dosen->where('name', 'like', "%{$search}%");
-                        })
-                        ->orWhereHas('pembimbing2', function ($dosen) use ($search) {
-                            $dosen->where('name', 'like', "%{$search}%");
-                        });
+                    $inner->where('nim', 'like', "%{$search}%")
+                        ->orWhere('nama_mahasiswa', 'like', "%{$search}%")
+                        ->orWhere('judul', 'like', "%{$search}%")
+                        ->orWhere('pembimbing1', 'like', "%{$search}%")
+                        ->orWhere('pembimbing2', 'like', "%{$search}%");
                 });
             })
             ->latest()
