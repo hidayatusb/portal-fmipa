@@ -7,14 +7,20 @@ use App\Models\JudulSkripsi;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.demo1.base')]
 class DaftarJudul extends Component
 {
     use SetsBreadcrumbs;
+    use WithPagination;
 
+    #[Url]
     public string $search = '';
+
+    public int $perPage = 25;
 
     public function mount(): void
     {
@@ -24,6 +30,16 @@ class DaftarJudul extends Component
             ['label' => 'Home', 'url' => route('dashboard.index')],
             ['label' => 'Daftar Judul Skripsi'],
         ]);
+    }
+
+    public function updatingSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPerPage(): void
+    {
+        $this->resetPage();
     }
 
     public function render(): View
@@ -41,7 +57,7 @@ class DaftarJudul extends Component
                 });
             })
             ->latest()
-            ->get();
+            ->paginate($this->perPage);
 
         return view('livewire.skripsi.daftar-judul', [
             'items' => $items,

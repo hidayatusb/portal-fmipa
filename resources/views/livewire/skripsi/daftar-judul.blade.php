@@ -18,6 +18,12 @@
                 <div class="kt-card-header min-h-16 flex-wrap gap-3">
                     <input type="text" placeholder="Cari NIM, nama, judul, pembimbing..."
                         class="kt-input sm:w-72" wire:model.live.debounce.300ms="search" />
+                    <select class="kt-select w-28" wire:model.live="perPage">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
                 </div>
 
                 @if ($items->isEmpty())
@@ -28,49 +34,22 @@
                         </p>
                     </div>
                 @else
-                    <div id="kt_datatable_daftar_judul_skripsi" class="kt-card-table" data-kt-datatable="true"
-                        data-kt-datatable-page-size="10" data-kt-datatable-state-save="false"
-                        wire:key="daftar-judul-skripsi-{{ md5($search) }}">
+                    <div class="kt-card-table">
                         <div class="kt-table-wrapper kt-scrollable">
-                            <table class="kt-table" data-kt-datatable-table="true">
+                            <table class="kt-table">
                                 <thead>
                                     <tr>
-                                        <th scope="col" class="w-16" data-kt-datatable-column="no"
-                                            data-kt-datatable-column-sort="false">
-                                            <span class="kt-table-col">
-                                                <span class="kt-table-col-label">No</span>
-                                            </span>
-                                        </th>
-                                        <th scope="col" class="min-w-[120px]" data-kt-datatable-column="nim">
-                                            <span class="kt-table-col">
-                                                <span class="kt-table-col-label">NIM</span>
-                                                <span class="kt-table-col-sort"></span>
-                                            </span>
-                                        </th>
-                                        <th scope="col" class="min-w-[160px]" data-kt-datatable-column="nama">
-                                            <span class="kt-table-col">
-                                                <span class="kt-table-col-label">Nama Mahasiswa</span>
-                                                <span class="kt-table-col-sort"></span>
-                                            </span>
-                                        </th>
-                                        <th scope="col" class="min-w-[280px]" data-kt-datatable-column="judul">
-                                            <span class="kt-table-col">
-                                                <span class="kt-table-col-label">Judul</span>
-                                                <span class="kt-table-col-sort"></span>
-                                            </span>
-                                        </th>
-                                        <th scope="col" class="min-w-[200px]" data-kt-datatable-column="pembimbing">
-                                            <span class="kt-table-col">
-                                                <span class="kt-table-col-label">Pembimbing</span>
-                                                <span class="kt-table-col-sort"></span>
-                                            </span>
-                                        </th>
+                                        <th scope="col" class="w-16">No</th>
+                                        <th scope="col" class="min-w-[120px]">NIM</th>
+                                        <th scope="col" class="min-w-[160px]">Nama Mahasiswa</th>
+                                        <th scope="col" class="min-w-[280px]">Judul</th>
+                                        <th scope="col" class="min-w-[200px]">Pembimbing</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($items as $index => $item)
+                                    @foreach ($items as $item)
                                         <tr wire:key="judul-skripsi-{{ $item->id }}">
-                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $items->firstItem() + $loop->index }}</td>
                                             <td>{{ $item->nim }}</td>
                                             <td>{{ $item->nama_mahasiswa }}</td>
                                             <td>{{ $item->judul }}</td>
@@ -85,15 +64,15 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="kt-datatable-toolbar">
-                            <div class="kt-datatable-length">
-                                Show<select class="kt-select kt-select-sm w-16" name="perpage"
-                                    data-kt-datatable-size="true"></select>per page
-                            </div>
-                            <div class="kt-datatable-info">
-                                <span data-kt-datatable-info="true"></span>
-                                <div class="kt-datatable-pagination" data-kt-datatable-pagination="true"></div>
-                            </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-t border-border px-5 py-4">
+                        <p class="text-sm text-secondary-foreground">
+                            Menampilkan {{ $items->firstItem() }}–{{ $items->lastItem() }}
+                            dari {{ $items->total() }} data
+                        </p>
+                        <div>
+                            {{ $items->links() }}
                         </div>
                     </div>
                 @endif
