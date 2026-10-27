@@ -36,28 +36,51 @@
                         <i class="ki-filled {{ $bimbingan->overallStatus()->icon() }}"></i>
                     </span>
                 </div>
-                <div class="kt-card-content grid gap-4 p-5 sm:grid-cols-2">
-                    <div class="rounded-lg border border-border p-4">
-                        <div class="mb-2 flex items-center justify-between gap-2">
-                            <span class="text-xs font-medium uppercase text-muted-foreground">Pembimbing 1</span>
-                            <span class="kt-badge kt-badge-sm px-1 {{ $bimbingan->pembimbing1_status->badgeClass() }}"
-                                title="{{ $bimbingan->pembimbing1_status->label() }}">
-                                <i class="ki-filled {{ $bimbingan->pembimbing1_status->icon() }}"></i>
-                            </span>
+                <div class="kt-card-content flex flex-col gap-4 p-5">
+                    @if (! $bimbingan->canBeResubmitted())
+                        <form wire:submit.prevent="saveJudulSkripsi" class="flex flex-col gap-2">
+                            <label class="text-sm font-medium text-foreground" for="judul_skripsi_edit">Judul Skripsi</label>
+                            <div class="flex flex-col gap-2 sm:flex-row">
+                                <input id="judul_skripsi_edit" type="text" class="kt-input grow"
+                                    wire:model="judul_skripsi" placeholder="Masukkan judul skripsi" />
+                                <button type="submit" class="kt-btn kt-btn-outline shrink-0" wire:loading.attr="disabled">
+                                    Simpan Judul
+                                </button>
+                            </div>
+                            @error('judul_skripsi')
+                                <p class="text-xs text-destructive">{{ $message }}</p>
+                            @enderror
+                        </form>
+                    @elseif ($bimbingan->judul)
+                        <div>
+                            <span class="text-xs font-medium uppercase text-muted-foreground">Judul Skripsi</span>
+                            <p class="mt-1 text-sm font-medium text-mono">{{ $bimbingan->judul }}</p>
                         </div>
-                        <p class="text-sm font-semibold text-mono">{{ $bimbingan->pembimbing1?->name }}</p>
-                        <p class="text-xs text-secondary-foreground">{{ $bimbingan->pembimbing1?->username }}</p>
-                    </div>
-                    <div class="rounded-lg border border-border p-4">
-                        <div class="mb-2 flex items-center justify-between gap-2">
-                            <span class="text-xs font-medium uppercase text-muted-foreground">Pembimbing 2</span>
-                            <span class="kt-badge kt-badge-sm px-1 {{ $bimbingan->pembimbing2_status->badgeClass() }}"
-                                title="{{ $bimbingan->pembimbing2_status->label() }}">
-                                <i class="ki-filled {{ $bimbingan->pembimbing2_status->icon() }}"></i>
-                            </span>
+                    @endif
+
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div class="rounded-lg border border-border p-4">
+                            <div class="mb-2 flex items-center justify-between gap-2">
+                                <span class="text-xs font-medium uppercase text-muted-foreground">Pembimbing 1</span>
+                                <span class="kt-badge kt-badge-sm px-1 {{ $bimbingan->pembimbing1_status->badgeClass() }}"
+                                    title="{{ $bimbingan->pembimbing1_status->label() }}">
+                                    <i class="ki-filled {{ $bimbingan->pembimbing1_status->icon() }}"></i>
+                                </span>
+                            </div>
+                            <p class="text-sm font-semibold text-mono">{{ $bimbingan->pembimbing1?->name }}</p>
+                            <p class="text-xs text-secondary-foreground">{{ $bimbingan->pembimbing1?->username }}</p>
                         </div>
-                        <p class="text-sm font-semibold text-mono">{{ $bimbingan->pembimbing2?->name }}</p>
-                        <p class="text-xs text-secondary-foreground">{{ $bimbingan->pembimbing2?->username }}</p>
+                        <div class="rounded-lg border border-border p-4">
+                            <div class="mb-2 flex items-center justify-between gap-2">
+                                <span class="text-xs font-medium uppercase text-muted-foreground">Pembimbing 2</span>
+                                <span class="kt-badge kt-badge-sm px-1 {{ $bimbingan->pembimbing2_status->badgeClass() }}"
+                                    title="{{ $bimbingan->pembimbing2_status->label() }}">
+                                    <i class="ki-filled {{ $bimbingan->pembimbing2_status->icon() }}"></i>
+                                </span>
+                            </div>
+                            <p class="text-sm font-semibold text-mono">{{ $bimbingan->pembimbing2?->name }}</p>
+                            <p class="text-xs text-secondary-foreground">{{ $bimbingan->pembimbing2?->username }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -76,6 +99,15 @@
                             Salah satu atau kedua pembimbing menolak. Silakan pilih ulang dosen pembimbing.
                         </div>
                     @endif
+
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-sm font-medium text-foreground" for="judul_skripsi">Judul Skripsi</label>
+                        <input id="judul_skripsi" type="text" class="kt-input" wire:model="judul_skripsi"
+                            placeholder="Masukkan judul skripsi" />
+                        @error('judul_skripsi')
+                            <p class="text-xs text-destructive">{{ $message }}</p>
+                        @enderror
+                    </div>
 
                     <div class="grid gap-5 sm:grid-cols-2">
                         <div class="flex flex-col gap-1.5">

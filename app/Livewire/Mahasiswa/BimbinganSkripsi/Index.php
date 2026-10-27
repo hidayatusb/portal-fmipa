@@ -19,6 +19,8 @@ class Index extends Component
 {
     use SetsBreadcrumbs;
 
+    public string $judul_skripsi = '';
+
     public ?int $pembimbing1_id = null;
 
     public ?int $pembimbing2_id = null;
@@ -48,9 +50,13 @@ class Index extends Component
 
         $bimbingan = $this->currentBimbingan();
 
-        if ($bimbingan && $bimbingan->canBeResubmitted()) {
-            $this->pembimbing1_id = $bimbingan->pembimbing1_id;
-            $this->pembimbing2_id = $bimbingan->pembimbing2_id;
+        if ($bimbingan) {
+            $this->judul_skripsi = $bimbingan->judul ?? '';
+
+            if ($bimbingan->canBeResubmitted()) {
+                $this->pembimbing1_id = $bimbingan->pembimbing1_id;
+                $this->pembimbing2_id = $bimbingan->pembimbing2_id;
+            }
         }
     }
 
@@ -69,6 +75,7 @@ class Index extends Component
         $dosenIds = $this->dosenOptions()->pluck('id')->all();
 
         $this->validate([
+            'judul_skripsi' => ['required', 'string', 'min:10', 'max:500'],
             'pembimbing1_id' => ['required', 'integer', Rule::in($dosenIds)],
             'pembimbing2_id' => [
                 'required',
@@ -77,6 +84,8 @@ class Index extends Component
                 'different:pembimbing1_id',
             ],
         ], [
+            'judul_skripsi.required' => 'Judul skripsi wajib diisi.',
+            'judul_skripsi.min' => 'Judul skripsi minimal 10 karakter.',
             'pembimbing1_id.required' => 'Pembimbing 1 wajib dipilih.',
             'pembimbing2_id.required' => 'Pembimbing 2 wajib dipilih.',
             'pembimbing2_id.different' => 'Pembimbing 1 dan Pembimbing 2 harus berbeda.',
@@ -84,6 +93,7 @@ class Index extends Component
 
         $payload = [
             'mahasiswa_id' => Auth::id(),
+            'judul' => $this->judul_skripsi,
             'pembimbing1_id' => $this->pembimbing1_id,
             'pembimbing2_id' => $this->pembimbing2_id,
             'pembimbing1_status' => BimbinganApprovalStatus::Pending,
@@ -99,6 +109,28 @@ class Index extends Component
         }
 
         session()->flash('success', 'Permintaan bimbingan skripsi berhasil diajukan. Menunggu persetujuan dosen pembimbing.');
+    }
+
+    public function saveJudulSkripsi(): void
+    {
+        abort_unless(Auth::user()?->isMahasiswa(), 403);
+
+        $bimbingan = $this->currentBimbingan();
+
+        if (! $bimbingan || $bimbingan->canBeResubmitted()) {
+            return;
+        }
+
+        $this->validate([
+            'judul_skripsi' => ['required', 'string', 'min:10', 'max:500'],
+        ], [
+            'judul_skripsi.required' => 'Judul skripsi wajib diisi.',
+            'judul_skripsi.min' => 'Judul skripsi minimal 10 karakter.',
+        ]);
+
+        $bimbingan->update(['judul' => $this->judul_skripsi]);
+
+        session()->flash('success', 'Judul skripsi berhasil disimpan.');
     }
 
     public function openLogbookForm(): void

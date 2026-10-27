@@ -13,6 +13,7 @@ class BimbinganSkripsi extends Model
 
     protected $fillable = [
         'mahasiswa_id',
+        'judul',
         'pembimbing1_id',
         'pembimbing2_id',
         'pembimbing1_status',

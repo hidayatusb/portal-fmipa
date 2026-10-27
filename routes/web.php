@@ -28,6 +28,7 @@ use App\Livewire\Mahasiswa\Elearning\Show as MahasiswaElearningShow;
 use App\Livewire\Mahasiswa\Elearning\ShowAssignment as MahasiswaShowAssignment;
 use App\Livewire\Mahasiswa\BimbinganSkripsi\Index as MahasiswaBimbinganSkripsiIndex;
 use App\Livewire\Profile\Edit as ProfileEdit;
+use App\Livewire\Skripsi\DaftarJudul as DaftarJudulSkripsi;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -40,6 +41,7 @@ Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/profil/foto', [ProfilePictureController::class, 'show'])->name('profile.picture');
     Route::get('/pengumuman/{announcement}/gambar', [AnnouncementImageController::class, 'show'])
         ->name('announcements.image');
+    Route::get('/daftar-judul-skripsi', DaftarJudulSkripsi::class)->name('daftar-judul-skripsi.index');
 
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/review-akun', AdminUserApprovalsIndex::class)->name('user-approvals.index');
