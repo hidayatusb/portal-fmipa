@@ -5,9 +5,7 @@
                 <h1 class="text-xl font-medium leading-none text-mono">
                     Bimbingan Skripsi
                 </h1>
-                <p class="text-sm font-normal text-secondary-foreground">
-                    Setujui atau tolak permintaan bimbingan dari mahasiswa.
-                </p>
+                
             </div>
             @if ($pendingCount > 0)
                 <span class="kt-badge kt-badge-warning kt-badge-outline">

@@ -1,7 +1,9 @@
 import "./libs/trix";
 import './bootstrap';
 
-import '@keenthemes/ktui';
+// KTUI is loaded once via layouts/partials/scripts.blade.php (ktui.min.js).
+// Do not import @keenthemes/ktui here — a second copy double-binds toggles
+// (sidebar collapse clicks add then immediately remove the class).
 import { registerAssignmentCountdown } from './assignment-countdown';
 
 registerAssignmentCountdown();
